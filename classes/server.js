@@ -17,7 +17,10 @@ class Server {
         this.#database = new Repository();
 
         // Middlewares
-        this.#server.use(cors({ origin: "*" })); // Probably need to change origin later
+        this.#server.use(cors({ 
+            origin: "*",
+            methods: ["GET", "POST", "PUT", "DELETE"],
+            credentials: true })); // Probably need to change origin later
         this.#server.use(express.json());
 
         this.#server.use((err, req, res, next) => { // IMPORTANT: THIS NEEDS TO BE LAST OF THE MIDDLEWARES
