@@ -1,4 +1,4 @@
-const implementation = require("./mysql2"); // Change the import if needing different DB
+const implementation = require("./mysql"); // Change the import if needing different DB
 
 class Repository {
 
