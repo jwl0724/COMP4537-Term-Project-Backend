@@ -1,6 +1,6 @@
 const chat = require("./chat_service/chat");
 const auth = require("./auth_service/auth");
-const reset = require("./auth_service/reset");
+const reset = require("./reset_service/reset");
 
 function build(app, database) {
     // Auth services
