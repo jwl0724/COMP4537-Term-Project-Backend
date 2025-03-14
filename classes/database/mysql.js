@@ -1,35 +1,34 @@
-const mysql = require("mysql");
+const mysql = require("mysql2");
 
-const connectToDB = function() {
+const connectToDB = function () {
     // Expects to run server with .env file
-    const connection = mysql.createConnection({
+    const pool = mysql.createPool({
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
         port: process.env.DB_PORT
-    });
-    connection.connect();
-    return connection;
-}
+    }).promise(); // Enables async/await support
+    return pool;
+};
 
-const readUser = async function(connection, email) {
-    return new Promise((res, rej) => {
-        connection.query(`SELECT * FROM Users WHERE email = ${email}`, (err, result) => {
-            if (err) rej(err);
-            res(result);
-        });
-    })
-}
+const readUser = async function (pool, email) {
+    try {
+        const [rows] = await pool.execute("SELECT * FROM Users WHERE email = ?", [email]);
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+};
 
-const writeUser = async function(connection, email, hashedPassword) {
-    return new Promise((res, rej) => {
-        connection.query(`INSERT INTO Users (email, password) VALUES ('${email}', '${hashedPassword}')`, (err, result) => {
-            if (err) rej(err);
-            res(result);
-        });
-    });
-}
+const writeUser = async function (pool, email, hashedPassword) {
+    try {
+        const [result] = await pool.execute("INSERT INTO Users (email, password) VALUES (?, ?)", [email, hashedPassword]);
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
 
 exports.connectToDB = connectToDB;
 exports.readUser = readUser;

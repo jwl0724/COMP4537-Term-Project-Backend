@@ -1,4 +1,4 @@
-const implementation = require("./mysql"); // Change the import if needing different DB
+const implementation = require("./mysql2"); // Change the import if needing different DB
 
 class Repository {
 
@@ -12,9 +12,9 @@ class Repository {
         return implementation.readUser(this.#connection, email);
     }
 
-    AddUser(email, hashedPassword) {
+    addUser(email, hashedPassword) {
         return implementation.writeUser(this.#connection, email, hashedPassword);
     }
 }
 
-exports.Repository = Repository;
+module.exports = Repository;

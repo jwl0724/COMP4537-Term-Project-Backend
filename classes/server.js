@@ -1,37 +1,44 @@
 const express = require("express");
 const cors = require("cors");
 const route = require("./routeBuilder");
-const repo = require("./database/repository");
+const Repository = require("./database/repository");
 
 class Server {
-
     #port
     #server;
     #database;
+    #httpServer;
 
     constructor(port) {
         this.#port = port;
         this.#server = express();
 
         // Create DB connection
-        this.#database = new repo.Repository();
+        this.#database = new Repository();
 
         // Middlewares
-        this.#server.use(cors({ origin: "*" })) // Probably need to change origin later
-        this.#server.use((err, req, res, next) => res.sendStatus(400).send(err)); // IMPORTANT: THIS NEEDS TO BE LAST OF THE MIDDLEWARES
+        this.#server.use(cors({ origin: "*" })); // Probably need to change origin later
+        this.#server.use(express.json());
+
+        this.#server.use((err, req, res, next) => { // IMPORTANT: THIS NEEDS TO BE LAST OF THE MIDDLEWARES
+            console.error("Error:", err);
+            res.status(400).send({ error: err.message });
+        });
 
         route.build(this.#server, this.#database);
     }
 
     start() {
-        this.#server.listen(this.#port, () => {
+        this.#httpServer = this.#server.listen(this.#port, () => {
             console.log(`Server started on port ${this.#port}`);
         });
     }
 
     stop() {
-        this.#server.close();
+        if (this.#httpServer) {
+            this.#httpServer.close(() => console.log("Server stopped"));
+        }
     }
 }
 
-exports.Server = Server;
+module.exports = Server; 
