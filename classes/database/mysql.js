@@ -15,8 +15,9 @@ const connectToDB = function () {
 const readUser = async function (pool, email) {
     try {
         const [rows] = await pool.execute("SELECT * FROM Users WHERE email = ?", [email]);
-        return rows;
+        return rows.length ? rows[0] : null; 
     } catch (error) {
+        console.error("Database read error:", error)
         throw error;
     }
 };
@@ -26,6 +27,7 @@ const writeUser = async function (pool, email, hashedPassword) {
         const [result] = await pool.execute("INSERT INTO Users (email, password) VALUES (?, ?)", [email, hashedPassword]);
         return result;
     } catch (error) {
+        console.error("Database insertion error: ", error);
         throw error;
     }
 };
