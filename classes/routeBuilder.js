@@ -11,7 +11,7 @@ function build(app, database) {
     app.post("/logout", (req, res) => auth.logout(req, res))
 
     // Password reset services
-    app.post("/reset", (req, res, next) => reset.reset(req, res, database, next));
+    app.post("/reset", verifyToken, (req, res, next) => reset.reset(req, res, database, next));
 
     // Chat services
     app.post("/chat", verifyToken, (req, res) => chat.getChat(req, res));
