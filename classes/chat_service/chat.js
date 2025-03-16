@@ -1,22 +1,44 @@
 const ep = require("../../constants/endpoints");
 
 // On how to use fetch go here: https://www.npmjs.com/package/node-fetch
-const getResponse = async function(req, res) {
-    const prompt = req.prompt;
+const getResponse = async function (req, res) {
+    try {
+        const fetch = (await import("node-fetch")).default;
+        const userMessage = req.body.message;
 
-    // Get spongebob chatbot response
-    const chatbotResponse = await fetch(ep.Chatbot + `/${prompt}`); // This is going to need to be adjusted based on API req
-    const chatbotData = await chatbotResponse.json();
+        const chatbotResponse = await fetch(ep.Chatbot, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: userMessage })
+        });
 
-    // Send response text to spongebob TTS
-    const ttsResponse = await fetch(ep.TTS); // Again append whatever the TTS need
-    const ttsData = await ttsResponse.json();
+        if (!chatbotResponse.ok) {
+            throw new Error(`Chatbot API error: ${chatbotResponse.statusText}`);
+        }
 
-    // Send data back to client
-    res.send(JSON.stringify({
-        text: chatbotData.text,
-        audio: ttsData.audio
-    })); // Above will need to be changed depending on what the EP gives back
-}
+        const chatbotData = await chatbotResponse.json();
+
+        const emotion = Object.keys(chatbotData)[0] || "neutral";
+        const chatbotText = chatbotData[emotion] || "Oops! No response from SpongeBob.";
+
+        console.log(`🤖 Chatbot (${emotion}): ${chatbotText}`);
+
+        // const ttsResponse = await fetch(ep.TTS, {
+        //     method: "POST",
+        //     headers: { "Content-Type": "application/json" },
+        //     body: JSON.stringify({ text: chatbotText, emotion: emotion })
+        // });
+
+        // const ttsData = await ttsResponse.json();
+
+        res.json({
+            [emotion]: chatbotText
+            // audio: ttsData.audio
+        });
+
+    } catch (error) {
+        throw error;
+    }
+};
 
 exports.getChat = getResponse;
