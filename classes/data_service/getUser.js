@@ -14,7 +14,7 @@ async function getUserData(req, res, database, next) {
         res.json({
             email: user.email,
             role: user.role,
-            apiCallsLeft: user.api_calls_left
+            api_calls_left: user.api_calls_left
         });
 
     } catch (error) {
