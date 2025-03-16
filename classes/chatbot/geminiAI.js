@@ -43,7 +43,7 @@ const createChatbot = () => {
         systemInstruction: instructions,
         safetySettings: safetySettings,
     });
-    return model;
+    return model.startChat();
 };
 
 module.exports = createChatbot;
