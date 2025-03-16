@@ -1,6 +1,6 @@
 require("dotenv").config();
 const bcrypt = require("bcryptjs");
-const { generateToken, setTokenCookie } = require("../token");
+const { generateToken, setTokenCookie } = require("../utils/token");
 
 const login = async function (req, res, db, next) {
     try {
