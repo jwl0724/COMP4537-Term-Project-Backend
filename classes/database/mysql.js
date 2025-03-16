@@ -11,6 +11,7 @@ const connectToDB = function () {
     });
     return pool.promise();
 };
+
 const readUser = async function (pool, email) {
     try {
         const [rows] = await pool.execute("SELECT * FROM users WHERE email = ?", [email]);
