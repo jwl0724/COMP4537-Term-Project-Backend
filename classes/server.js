@@ -32,7 +32,8 @@ class Server {
 
         this.#server.use((err, req, res, next) => { // IMPORTANT: THIS NEEDS TO BE LAST OF THE MIDDLEWARES
             console.error("Error:", err);
-            res.status(400).send({ error: err.message });
+            const statusCode = err.status || 500;
+            res.status(statusCode).json({ error: err.message });
         });
     }
 
