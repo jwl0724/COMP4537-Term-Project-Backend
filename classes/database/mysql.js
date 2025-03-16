@@ -21,7 +21,6 @@ const readUser = async function (pool, email) {
     }
 };
 
-
 const writeUser = async function (pool, email, hashedPassword) {
     try {
         const [result] = await pool.execute(

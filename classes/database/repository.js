@@ -26,7 +26,6 @@ class Repository {
     //     }
     // }
 
-
     async getUser(email) {
         try {
             return await implementation.readUser(this.#connection, email);
