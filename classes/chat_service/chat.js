@@ -9,7 +9,12 @@ const getResponse = async function (req, res) {
         let result = await chat.sendMessage(userMessage);
         const chatbotText = result.response.text();
 
-        console.log(chatbotText);
+        // Extract emotion from the response
+        const match = chatbotText.match(/^(happy|sad|angry|disgust|scared|shocked|mock|neutral):\s*(.*)/i);
+        const emotion = match ? match[1].toLowerCase() : "neutral";
+        const finalText = match ? match[2] : chatbotText;
+
+        console.log(`${emotion}): ${finalText}`);
 
         // const ttsResponse = await fetch(ep.TTS, {
         //     method: "POST",
@@ -20,7 +25,7 @@ const getResponse = async function (req, res) {
         // const ttsData = await ttsResponse.json();
 
         res.json({
-            response: chatbotText
+            [emotion]: finalText
             // audio: ttsData.audio
         });
 
