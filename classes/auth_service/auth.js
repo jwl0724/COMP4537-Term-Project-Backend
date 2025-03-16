@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 
-const login = async function (req, res, db, next) {
+const login = async function (req, res, next, db) {
     try {
         console.log("Login request received:", req.body);
 
@@ -12,7 +12,6 @@ const login = async function (req, res, db, next) {
 
         res.sendStatus(200);
     } catch (error) {
-        console.error("Login error:", error);
         next(error);
     }
 };
@@ -42,7 +41,6 @@ const signup = async function (req, res, db, next) {
 
         res.sendStatus(200);
     } catch (error) {
-        console.error("Signup error:", error);
         next(error);
     }
 };
