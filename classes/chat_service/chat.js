@@ -1,12 +1,10 @@
 const createChatbot = require("../chatbot/geminiAI");
-const chatBot = createChatbot();
-const chat = chatBot.startChat();
 
 const getResponse = async function (req, res) {
     try {
         const userMessage = req.body.message;
-
-        let result = await chat.sendMessage(userMessage);
+        const chatBot = createChatbot(); 
+        let result = await chatBot.sendMessage(userMessage);
         const chatbotText = result.response.text();
 
         // Extract emotion from the response
