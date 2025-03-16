@@ -1,27 +1,15 @@
-const ep = require("../../constants/endpoints");
+const createChatbot = require("../chatbot/geminiAI");
+const chatBot = createChatbot();
+const chat = chatBot.startChat();
 
-// On how to use fetch go here: https://www.npmjs.com/package/node-fetch
 const getResponse = async function (req, res) {
     try {
-        const fetch = (await import("node-fetch")).default;
         const userMessage = req.body.message;
 
-        const chatbotResponse = await fetch(ep.Chatbot, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: userMessage })
-        });
+        let result = await chat.sendMessage(userMessage);
+        const chatbotText = result.response.text();
 
-        if (!chatbotResponse.ok) {
-            throw new Error(`Chatbot API error: ${chatbotResponse.statusText}`);
-        }
-
-        const chatbotData = await chatbotResponse.json();
-
-        const emotion = Object.keys(chatbotData)[0] || "neutral";
-        const chatbotText = chatbotData[emotion] || "Oops! No response from SpongeBob.";
-
-        console.log(`🤖 Chatbot (${emotion}): ${chatbotText}`);
+        console.log(chatbotText);
 
         // const ttsResponse = await fetch(ep.TTS, {
         //     method: "POST",
@@ -32,7 +20,7 @@ const getResponse = async function (req, res) {
         // const ttsData = await ttsResponse.json();
 
         res.json({
-            [emotion]: chatbotText
+            response: chatbotText
             // audio: ttsData.audio
         });
 
