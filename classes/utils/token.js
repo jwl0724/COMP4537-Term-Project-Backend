@@ -48,4 +48,34 @@ function setTokenCookie(res, token) {
     }
 }
 
-module.exports = { verifyToken, generateToken, setTokenCookie };
+function generateRefreshToken(user) {
+    try {
+        const refreshToken = jwt.sign(
+            { email: user.email },
+            process.env.JWT_REFRESH_SECRET,
+            { expiresIn: '7d' }  // Refresh token expiration time (7 days)
+        );
+        return refreshToken;
+    } catch (error) {
+        const err = new Error('Error generating refresh token: ' + error.message);
+        err.status = 500;
+        throw err;
+    }
+}
+
+function setRefreshTokenCookie(res, refreshToken) {
+    try {
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 604800000,  // 7 days expiration
+        });
+    } catch (error) {
+        const err = new Error('Error setting refresh token cookie: ' + error.message);
+        err.status = 500;
+        throw err;
+    }
+}
+
+
+module.exports = { verifyToken, generateToken, setTokenCookie, generateRefreshToken, setRefreshTokenCookie };
