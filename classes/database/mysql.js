@@ -21,11 +21,11 @@ const readUser = async function (pool, email) {
     }
 };
 
-const writeUser = async function (pool, email, hashedPassword) {
+const writeUser = async function (pool, email, hashedPassword, role, apiCallsLeft) {
     try {
         const [result] = await pool.execute(
-            "INSERT INTO users (email, password) VALUES (?, ?)",
-            [email, hashedPassword]
+            "INSERT INTO users (email, password, role, api_calls_left) VALUES (?, ?, ?, ?)",
+            [email, hashedPassword, role, apiCallsLeft]
         );
         return result;
     } catch (error) {

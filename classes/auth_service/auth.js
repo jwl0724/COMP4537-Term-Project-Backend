@@ -28,7 +28,10 @@ const signup = async function (req, res, db, next) {
         const salt = await bcrypt.genSalt(12);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
-        const output = await db.writeUser(req.body.email, hashedPassword);
+        const role = req.body.role || 'user'; // Defaults to 'user' if no role is passed
+        const apiCallsLeft = role === 'admin' ? -1 : 20; // Admins get -1 (unlimited calls), users get 20
+
+        const output = await db.writeUser(req.body.email, hashedPassword, role, apiCallsLeft);
         if (!output) {
             throw new Error("Error creating user");
         }

@@ -18,7 +18,9 @@ class Repository {
     //             CREATE TABLE IF NOT EXISTS users (
     //                 id INT AUTO_INCREMENT PRIMARY KEY,
     //                 email VARCHAR(255) UNIQUE NOT NULL,
-    //                 password VARCHAR(255) NOT NULL
+    //                 password VARCHAR(255) NOT NULL,
+    //                 role VARCHAR(50) DEFAULT 'user',
+    //                 api_calls_left INT DEFAULT 20
     //             )
     //         `);
     //     } catch (error) {
@@ -34,9 +36,9 @@ class Repository {
         }
     }
 
-    async writeUser(email, hashedPassword) {
+    async writeUser(email, hashedPassword, role, apiCallsLeft) {
         try {
-            return await implementation.writeUser(this.#connection, email, hashedPassword);
+            return await implementation.writeUser(this.#connection, email, hashedPassword, role, apiCallsLeft);
         } catch (error) {
             throw error;
         }
