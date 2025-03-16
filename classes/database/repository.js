@@ -30,12 +30,24 @@ class Repository {
     // }
 
 
-    getUser(email) {
-        return implementation.readUser(this.#connection, email);
+    async getUser(email) {
+        try {
+            console.log(`Fetching user with email: ${email}`);
+            return await implementation.readUser(this.#connection, email);
+        } catch (error) {
+            console.error("Error fetching user:", error);
+            throw error;
+        }
     }
 
-    addUser(email, hashedPassword) {
-        return implementation.writeUser(this.#connection, email, hashedPassword);
+    async writeUser(email, hashedPassword) {
+        try {
+            console.log(`Adding user: ${email}`);
+            return await implementation.writeUser(this.#connection, email, hashedPassword);
+        } catch (error) {
+            console.error("Error adding user:", error);
+            throw error;
+        }
     }
 }
 
