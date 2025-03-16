@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 
-const login = async function (req, res, next, db) {
+const login = async function (req, res, db, next) {
     try {
         console.log("Login request received:", req.body);
 
@@ -10,6 +10,7 @@ const login = async function (req, res, next, db) {
         const match = await bcrypt.compare(req.body.password, user.password);
         if (!match) throw new Error("Invalid credentials");
 
+        console.log(`User logged in with email: ${req.body.email}`);
         res.sendStatus(200);
     } catch (error) {
         next(error);
