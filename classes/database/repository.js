@@ -21,10 +21,7 @@ class Repository {
     //                 password VARCHAR(255) NOT NULL
     //             )
     //         `);
-
-    //         console.log(" Database initialized successfully");
     //     } catch (error) {
-    //         console.error("Error initializing database:", error);
     //         throw error;
     //     }
     // }
@@ -32,20 +29,16 @@ class Repository {
 
     async getUser(email) {
         try {
-            console.log(`Fetching user with email: ${email}`);
             return await implementation.readUser(this.#connection, email);
         } catch (error) {
-            console.error("Error fetching user:", error);
             throw error;
         }
     }
 
     async writeUser(email, hashedPassword) {
         try {
-            console.log(`Adding user: ${email}`);
             return await implementation.writeUser(this.#connection, email, hashedPassword);
         } catch (error) {
-            console.error("Error adding user:", error);
             throw error;
         }
     }
