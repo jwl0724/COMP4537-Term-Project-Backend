@@ -3,7 +3,12 @@ const createChatbot = require("../chatbot/geminiAI");
 const getResponse = async function (req, res) {
     try {
         const userMessage = req.body.message;
-        const chatBot = createChatbot(); 
+
+        if (!userMessage) {
+            throw new Error("No message provided in the request body.");
+        }
+
+        const chatBot = createChatbot();
         let result = await chatBot.sendMessage(userMessage);
         const chatbotText = result.response.text();
 
@@ -28,7 +33,11 @@ const getResponse = async function (req, res) {
         });
 
     } catch (error) {
-        throw error;
+        if (error) {
+            res.status(400).json({ error: error.message });
+        } else {
+            throw new Error("Error during chatbot interaction.");
+        }
     }
 };
 
