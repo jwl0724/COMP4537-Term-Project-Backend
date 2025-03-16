@@ -16,7 +16,7 @@ function build(app, database) {
     // Chat services
     app.post("/chat", verifyToken, (req, res) => chat.getChat(req, res));
 
-    // Check API calls left
+    // Data services
     app.get("/get-user-data", verifyToken, (req, res, next) => data.getUserData(req, res, database, next));
 }
 
