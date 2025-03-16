@@ -14,7 +14,7 @@ const getResponse = async function (req, res) {
         const emotion = match ? match[1].toLowerCase() : "neutral";
         const finalText = match ? match[2] : chatbotText;
 
-        console.log(`${emotion}): ${finalText}`);
+        console.log(`${emotion}: ${finalText}`);
 
         // const ttsResponse = await fetch(ep.TTS, {
         //     method: "POST",
