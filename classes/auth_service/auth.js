@@ -1,25 +1,50 @@
 const bcrypt = require("bcryptjs");
 
-const login = async function(req, res, db) {
-    const user = await db.getUser(req.body.email);
-    if (!user) return res.status(404).json({ error: "User not found" });
+const login = async function (req, res, db, next) {
+    try {
+        console.log("Login request received:", req.body);
 
-    const match = await bcrypt.compare(req.body.password, user.password);
+        const user = await db.getUser(req.body.email);
+        if (!user) throw new Error("User not found");
 
-    // Obviously this needs to be changed to some more legit auth service (maybe find some middleware?)
-    if (match) res.sendStatus(200);
-    else if (!match) return res.status(401).json({ error: "Invalid credentials" });
-}
+        const match = await bcrypt.compare(req.body.password, user.password);
+        if (!match) throw new Error("Invalid credentials");
 
-const signup = async function(req, res, db) {
-    const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+        res.sendStatus(200);
+    } catch (error) {
+        console.error("Login error:", error);
+        next(error);
+    }
+};
 
-    const output = await db.writeUser(req.body.email, hashedPassword);
-    if (!output) return res.status(500).json({ error: "Error creating user" });
-    else console.log(output);
-    res.sendStatus(200); // Again find a means to redirect
-}
+const signup = async function (req, res, db, next) {
+    try {
+        if (!req.body.email || !req.body.password) {
+            throw new Error("Email and password are required");
+        }
 
-exports.login = login;
-exports.signup = signup;
+        console.log("Signup request received:", req.body);
+
+        const existingUser = await db.getUser(req.body.email);
+        if (existingUser) {
+            throw new Error("User already exists");
+        }
+
+        console.log("Hashing password...");
+        const salt = await bcrypt.genSalt(12);
+        const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+        console.log("Inserting user into database...");
+        const output = await db.writeUser(req.body.email, hashedPassword);
+        if (!output) {
+            throw new Error("Error creating user");
+        }
+
+        res.sendStatus(200);
+    } catch (error) {
+        console.error("Signup error:", error);
+        next(error);
+    }
+};
+
+module.exports = { login, signup };
