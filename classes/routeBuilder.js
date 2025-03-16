@@ -1,6 +1,7 @@
 const chat = require("./chat_service/chat");
 const auth = require("./auth_service/auth");
 const reset = require("./reset_service/reset");
+const data = require("./data_service/getUser")
 const { verifyToken } = require("./token");
 
 function build(app, database) {
@@ -14,6 +15,9 @@ function build(app, database) {
 
     // Chat services
     app.post("/chat", verifyToken, (req, res) => chat.getChat(req, res));
+
+    // Check API calls left
+    app.get("/get-user-data", verifyToken, (req, res, next) => data.getUserData(req, res, database, next));
 }
 
 exports.build = build;
