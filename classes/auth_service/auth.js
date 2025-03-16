@@ -1,4 +1,6 @@
+require("dotenv").config();
 const bcrypt = require("bcryptjs");
+const { generateToken, setTokenCookie } = require("../token");
 
 const login = async function (req, res, db, next) {
     try {
@@ -7,6 +9,10 @@ const login = async function (req, res, db, next) {
 
         const match = await bcrypt.compare(req.body.password, user.password);
         if (!match) throw new Error("Invalid credentials");
+
+        const token = generateToken(user);
+
+        setTokenCookie(res, token);
 
         res.status(200).json({ message: "Login successful" });
 
@@ -36,6 +42,10 @@ const signup = async function (req, res, db, next) {
             throw new Error("Error creating user");
         }
 
+        const token = generateToken({ email: req.body.email, role });
+
+        setTokenCookie(res, token);
+
         res.status(200).json({ message: "User created successfully" });
 
     } catch (error) {
@@ -43,4 +53,9 @@ const signup = async function (req, res, db, next) {
     }
 };
 
-module.exports = { login, signup };
+function logout(req, res) {
+    res.clearCookie('token');  // Clear the JWT token cookie
+    res.status(200).json({ message: 'Logged out successfully' });
+};
+
+module.exports = { login, signup, logout };
