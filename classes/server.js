@@ -20,13 +20,6 @@ class Server {
 
         // Middlewares
         this.#server.use(cors({
-<<<<<<< HEAD
-            origin: "http://127.0.0.1:8080",
-            methods: ["GET", "POST", "PUT", "DELETE"],
-            credentials: true,
-            allowedHeaders: ["Content-Type", "Authorization"] 
-        })); // Probably need to change origin later
-=======
             origin: (origin, callback) => {
                 if (!origin || EP.ALLOWED_ORIGINS.includes(origin)) {
                     callback(null, origin);  // Allow request
@@ -35,9 +28,10 @@ class Server {
                 }
             },
             methods: ["GET", "POST", "PUT", "DELETE"],  // methods
-            credentials: true  // Required for cookies
+            credentials: true,  // Required for cookies
+            allowedHeaders: ["Content-Type", "Authorization"]
         }));
->>>>>>> 7600bac4468baa9e96cdbec1c6c15d6376a12779
+
 
         this.#server.use(cookieParser());
 
