@@ -23,6 +23,14 @@ class Repository {
             throw error;
         }
     }
+
+    async getAllUsers() {
+        try {
+            return await implementation.getAllUsers(this.#connection);
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 module.exports = Repository;

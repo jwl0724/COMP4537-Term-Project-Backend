@@ -33,4 +33,14 @@ const writeUser = async function (pool, email, hashedPassword, role, apiCallsLef
     }
 };
 
-module.exports = { connectToDB, readUser, writeUser };
+
+const getAllUsers = async function (pool) {
+    try {
+        const [rows] = await pool.execute("SELECT * FROM users");
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+};
+
+module.exports = { connectToDB, readUser, writeUser, getAllUsers };
