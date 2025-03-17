@@ -5,6 +5,8 @@ const getUserData = require("./data_service/getUser");
 const getAllUserData = require("./data_service/getAllUsers");
 const { verifyToken } = require("./utils/token");
 
+const { searchSpongeBobModels } = require("./tts_service/fakeyou");
+
 function build(app, database) {
     // Auth services
     app.post("/login", (req, res, next) => auth.login(req, res, database, next));
@@ -29,6 +31,16 @@ function build(app, database) {
     // Data services
     app.get("/get-user-data", verifyToken, (req, res, next) => getUserData(req, res, database, next));
     app.get("/get-all-users", verifyToken, (req, res, next) => getAllUserData(req, res, database, next));
+
+    app.get("/search-spongebob", async (req, res) => {
+        try {
+            const models = await searchSpongeBobModels();
+            res.json({ success: true, models });
+        } catch (error) {
+            console.error("Error fetching SpongeBob models:", error);
+            res.status(500).json({ success: false, error: "Internal server error" });
+        }
+    });
 
 }
 
