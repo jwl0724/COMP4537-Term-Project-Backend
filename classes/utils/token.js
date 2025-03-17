@@ -39,6 +39,7 @@ function setTokenCookie(res, token) {
         res.cookie('token', token, {
             httpOnly: true,   // Prevent JavaScript from accessing the cookie
             secure: true,     // Cookies sent only over https
+            sameSite: 'none', // Cross-site cookies are allowed
             maxAge: 3600000   // 1 hour expiration
         });
     } catch (error) {
