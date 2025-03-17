@@ -28,7 +28,8 @@ const getResponse = async function (req, res) {
         // const ttsData = await ttsResponse.json();
 
         res.json({
-            [emotion]: finalText
+            text: finalText,
+            emotion: emotion,
             // audio: ttsData.audio
         });
 
