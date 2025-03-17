@@ -3,6 +3,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const route = require("./routeBuilder");
 const Repository = require("./database/repository");
+const EP = require("../constants/endpoints")
 
 class Server {
     #port
@@ -19,11 +20,24 @@ class Server {
 
         // Middlewares
         this.#server.use(cors({
+<<<<<<< HEAD
             origin: "http://127.0.0.1:8080",
             methods: ["GET", "POST", "PUT", "DELETE"],
             credentials: true,
             allowedHeaders: ["Content-Type", "Authorization"] 
         })); // Probably need to change origin later
+=======
+            origin: (origin, callback) => {
+                if (!origin || EP.ALLOWED_ORIGINS.includes(origin)) {
+                    callback(null, origin);  // Allow request
+                } else {
+                    callback(new Error("Not allowed by CORS"));  // Block request
+                }
+            },
+            methods: ["GET", "POST", "PUT", "DELETE"],  // methods
+            credentials: true  // Required for cookies
+        }));
+>>>>>>> 7600bac4468baa9e96cdbec1c6c15d6376a12779
 
         this.#server.use(cookieParser());
 
