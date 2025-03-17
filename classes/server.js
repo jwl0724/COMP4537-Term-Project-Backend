@@ -19,9 +19,10 @@ class Server {
 
         // Middlewares
         this.#server.use(cors({
-            origin: "*",
+            origin: "http://127.0.0.1:8080",
             methods: ["GET", "POST", "PUT", "DELETE"],
-            credentials: true
+            credentials: true,
+            allowedHeaders: ["Content-Type", "Authorization"] 
         })); // Probably need to change origin later
 
         this.#server.use(cookieParser());
