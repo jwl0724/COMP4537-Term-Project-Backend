@@ -3,6 +3,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const route = require("./routeBuilder");
 const Repository = require("./database/repository");
+const EP = require("../constants/endpoints")
 
 class Server {
     #port
@@ -19,7 +20,7 @@ class Server {
 
         // Middlewares
         this.#server.use(cors({
-            origin: "*",
+            origin: `http://${EP.FE}`,
             methods: ["GET", "POST", "PUT", "DELETE"],
             credentials: true
         })); // Probably need to change origin later

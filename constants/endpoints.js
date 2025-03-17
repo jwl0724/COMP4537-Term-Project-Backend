@@ -1,2 +1,2 @@
 exports.TTS = "EP Here";
-exports.DB = "EP Here";
+exports.FE = "localhost:8000";
