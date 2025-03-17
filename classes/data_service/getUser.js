@@ -22,4 +22,4 @@ async function getUserData(req, res, database, next) {
     }
 };
 
-exports.getUserData = getUserData;
+module.exports = getUserData;
