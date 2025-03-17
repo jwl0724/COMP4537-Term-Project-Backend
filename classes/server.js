@@ -20,10 +20,16 @@ class Server {
 
         // Middlewares
         this.#server.use(cors({
-            origin: `http://${EP.FE}`,
-            methods: ["GET", "POST", "PUT", "DELETE"],
-            credentials: true
-        })); // Probably need to change origin later
+            origin: (origin, callback) => {
+                if (!origin || EP.ALLOWED_ORIGINS.includes(origin)) {
+                    callback(null, origin);  // Allow request
+                } else {
+                    callback(new Error("Not allowed by CORS"));  // Block request
+                }
+            },
+            methods: ["GET", "POST", "PUT", "DELETE"],  // methods
+            credentials: true  // Required for cookies
+        }));
 
         this.#server.use(cookieParser());
 
