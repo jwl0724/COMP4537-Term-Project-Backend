@@ -1,7 +1,7 @@
 const chat = require("./chat_service/chat");
 const auth = require("./auth_service/auth");
 const reset = require("./reset_service/reset");
-const getUserData = require("./data_service/getUser");
+const getMe = require("./data_service/getMe");
 const getAllUserData = require("./data_service/getAllUsers");
 const { verifyToken } = require("./utils/token");
 
@@ -27,7 +27,7 @@ function build(app, database) {
     });
 
     // Data services
-    app.get("/get-user-data", verifyToken, (req, res, next) => getUserData(req, res, database, next));
+    app.get("/me", verifyToken, (req, res, next) => getMe(req, res, database, next));
     app.get("/get-all-users", verifyToken, (req, res, next) => getAllUserData(req, res, database, next));
 
 }
