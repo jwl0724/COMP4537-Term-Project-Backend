@@ -38,8 +38,7 @@ function setTokenCookie(res, token) {
     try {
         res.cookie('token', token, {
             httpOnly: true,   // Prevent JavaScript from accessing the cookie
-            secure: true,     // Cookies sent only over https
-            sameSite: 'none', // Cross-site cookies are allowed
+            secure: process.env.MODE === 'production',     // Cookies sent only over https
             maxAge: 3600000   // 1 hour expiration
         });
     } catch (error) {
@@ -68,7 +67,7 @@ function setRefreshTokenCookie(res, refreshToken) {
     try {
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            secure: process.env.MODE === 'production',
             maxAge: 604800000,  // 7 days expiration
         });
     } catch (error) {
