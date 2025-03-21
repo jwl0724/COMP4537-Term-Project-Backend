@@ -14,10 +14,7 @@ const login = async function (req, res, db, next) {
 
         setTokenCookie(res, token);
 
-        res.status(200).json({
-            message: "Login successful",
-            role: user.role
-        });
+        res.status(200).json({ message: "Login successful" });
 
     } catch (error) {
         next(error);
@@ -34,7 +31,8 @@ const signup = async function (req, res, db, next) {
         if (existingUser) {
             throw new Error("User already exists");
         }
-        const salt = await bcrypt.genSalt(12);
+        const saltRounds = Math.random() % 10 + 10;
+        const salt = await bcrypt.genSalt(12); // TODO: Save this value into database
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
         const role = req.body.role || 'user'; // Defaults to 'user' if no role is passed
@@ -49,10 +47,7 @@ const signup = async function (req, res, db, next) {
 
         setTokenCookie(res, token);
 
-        res.status(200).json({
-            message: "User created successfully",
-            role: role
-        });
+        res.status(200).json({ message: "User created successfully" });
 
     } catch (error) {
         next(error);

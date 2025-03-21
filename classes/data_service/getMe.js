@@ -1,4 +1,4 @@
-async function getUserData(req, res, database, next) {
+async function getMe(req, res, database, next) {
     try {
         const userEmail = req.user.email;
 
@@ -22,4 +22,4 @@ async function getUserData(req, res, database, next) {
     }
 };
 
-module.exports = getUserData;
+module.exports = getMe;
