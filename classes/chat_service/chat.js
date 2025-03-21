@@ -1,4 +1,4 @@
-const createChatbot = require("../chatbot/geminiAI");
+const createChatbot = require("./chatbot/geminiAI");
 
 const getResponse = async function (req, res) {
     try {
