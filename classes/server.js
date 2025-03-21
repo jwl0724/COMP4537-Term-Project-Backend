@@ -18,7 +18,7 @@ class Server {
         allowedHeaders: ["Content-Type", "Authorization"]
     }
 
-    static devevelopmentCorsOption = {
+    static developmentCorsOption = {
         origin: (origin, callback) => {
             if (/^(http:\/\/localhost|http:\/\/127\.0\.0\.1)/.test(origin)) callback(null, true);
             else callback(new Error("Not allowed by CORS"), false);
@@ -37,7 +37,7 @@ class Server {
 
         // Middlewares
         if (process.env.MODE === "production") this.#server.use(cors(Server.productionCorsOption));
-        else this.#server.use(cors(Server.devevelopmentCorsOption));
+        else this.#server.use(cors(Server.developmentCorsOption));
 
         this.#server.use(cookieParser());
 
