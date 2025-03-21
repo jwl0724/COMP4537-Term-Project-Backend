@@ -4,14 +4,14 @@ const prodCookieOptions = {
     httpOnly: true,   // Prevent JavaScript from accessing the cookie
     secure: true,     // Cookies sent only over https
     sameSite: 'None', // Cross-site cookies are allowed
-    maxAge: 3600000   // 1 hour expiration
+    maxAge: 1000 * 60 * 60  // 1 hour expiration
 }
 
 const devCookieOptions = {
     httpOnly: true,
     secure: false,
     sameSite: 'None',
-    maxAge: 3600000
+    maxAge: 1000 * 60 * 60
 };
 
 function verifyToken(req, res, next) {
@@ -79,7 +79,8 @@ function setRefreshTokenCookie(res, refreshToken) {
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            maxAge: 604800000,  // 7 days expiration
+            maxAge: 1000 * 60 * 60 * 24 * 7,  // 7 days expiration
+            sameSite: 'None'
         });
     } catch (error) {
         const err = new Error('Error setting refresh token cookie: ' + error.message);
