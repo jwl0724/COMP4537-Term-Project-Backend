@@ -1,5 +1,19 @@
 const jwt = require('jsonwebtoken');
 
+const prodCookieOptions = {
+    httpOnly: true,   // Prevent JavaScript from accessing the cookie
+    secure: true,     // Cookies sent only over https
+    sameSite: 'None', // Cross-site cookies are allowed
+    maxAge: 3600000   // 1 hour expiration
+}
+
+const devCookieOptions = {
+    httpOnly: true,
+    secure: false,
+    sameSite: 'None',
+    maxAge: 3600000
+};
+
 function verifyToken(req, res, next) {
     const token = req.cookies.token;  // Get token from cookies
 
@@ -36,12 +50,8 @@ function generateToken(user) {
 
 function setTokenCookie(res, token) {
     try {
-        res.cookie('token', token, {
-            httpOnly: true,   // Prevent JavaScript from accessing the cookie
-            secure: true,     // Cookies sent only over https
-            sameSite: 'none', // Cross-site cookies are allowed
-            maxAge: 3600000   // 1 hour expiration
-        });
+        const cookieOption = process.env.MODE === "production" ? prodCookieOptions : devCookieOptions;
+        res.cookie('token', token, cookieOption);
     } catch (error) {
         const err = new Error('Error setting token cookie: ' + error.message);
         err.status = 500;

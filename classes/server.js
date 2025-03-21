@@ -11,6 +11,23 @@ class Server {
     #database;
     #httpServer;
 
+    static productionCorsOption = {
+        origin: EP.ALLOWED_ORIGINS.prod,
+        methods: ["GET", "POST", "PUT", "DELETE"],  // methods
+        credentials: true, // Required for cookies
+        allowedHeaders: ["Content-Type", "Authorization"]
+    }
+
+    static devevelopmentCorsOption = {
+        origin: (origin, callback) => {
+            if (/^(http:\/\/localhost|http:\/\/127\.0\.0\.1)/.test(origin)) callback(null, true);
+            else callback(new Error("Not allowed by CORS"), false);
+        },
+        methods: ["GET", "POST", "PUT", "DELETE"],  // methods
+        credentials: true,
+        allowedHeaders: ["Content-Type", "Authorization"]
+    }
+
     constructor(port) {
         this.#port = port;
         this.#server = express();
@@ -19,19 +36,8 @@ class Server {
         this.#database = new Repository();
 
         // Middlewares
-        this.#server.use(cors({
-            origin: (origin, callback) => {
-                if (!origin || EP.ALLOWED_ORIGINS.includes(origin)) {
-                    callback(null, origin);  // Allow request
-                } else {
-                    callback(new Error("Not allowed by CORS"));  // Block request
-                }
-            },
-            methods: ["GET", "POST", "PUT", "DELETE"],  // methods
-            credentials: true,  // Required for cookies
-            allowedHeaders: ["Content-Type", "Authorization"]
-        }));
-
+        if (process.env.MODE === "production") this.#server.use(cors(Server.productionCorsOption));
+        else this.#server.use(cors(Server.devevelopmentCorsOption));
 
         this.#server.use(cookieParser());
 
@@ -40,7 +46,7 @@ class Server {
         route.build(this.#server, this.#database);
 
         this.#server.use((err, req, res, next) => { // IMPORTANT: THIS NEEDS TO BE LAST OF THE MIDDLEWARES
-            console.error("Error:", err);
+            console.error("Error:", err.message);
             const statusCode = err.status || 500;
             res.status(statusCode).json({ error: err.message });
         });
@@ -59,4 +65,4 @@ class Server {
     }
 }
 
-module.exports = Server; 
+module.exports = Server;
