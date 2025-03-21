@@ -27,7 +27,7 @@ function build(app, database) {
     });
 
     // Data services
-    app.get("/get-user-data", verifyToken, (req, res, next) => getUserData(req, res, database, next));
+    app.get("/me", verifyToken, (req, res, next) => getUserData(req, res, database, next));
     app.get("/get-all-users", verifyToken, (req, res, next) => getAllUserData(req, res, database, next));
 
 }
