@@ -13,7 +13,7 @@ class Server {
 
     static productionCorsOption = {
         origin: (origin, callback) => {
-            if (!origin || EP.ALLOWED_ORIGINS.prod.includes(origin)) {
+            if (EP.ALLOWED_ORIGINS.prod.includes(origin)) {
                 callback(null, true);
             } else {
                 callback(new Error("Not allowed by CORS"));
@@ -26,8 +26,11 @@ class Server {
 
     static developmentCorsOption = {
         origin: (origin, callback) => {
-            if (/^(http:\/\/localhost|http:\/\/127\.0\.0\.1)/.test(origin)) callback(null, true);
-            else callback(new Error("Not allowed by CORS"), false);
+            if (!origin || /^(http:\/\/localhost(:\d+)?|http:\/\/127\.0\.0\.1(:\d+)?)$/.test(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"), false);
+            }
         },
         methods: ["GET", "POST", "PUT", "DELETE"],  // methods
         credentials: true,
