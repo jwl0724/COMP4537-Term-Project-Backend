@@ -31,7 +31,7 @@ const signup = async function (req, res, db, next) {
         if (existingUser) {
             throw new Error("User already exists");
         }
-        const saltRounds = Math.random() % 10 + 10;
+        const saltRounds = Math.floor(Math.random() * 11) + 10;
         const salt = await bcrypt.genSalt(12); // TODO: Save this value into database
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
