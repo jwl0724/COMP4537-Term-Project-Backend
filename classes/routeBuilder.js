@@ -15,7 +15,7 @@ function build(app, database) {
     app.post("/reset", verifyToken, (req, res, next) => reset.reset(req, res, database, next));
 
     // Chat services
-    app.post("/chat", verifyToken, (req, res) => chat.getChat(req, res));
+    app.post("/chat", verifyToken, (req, res, next) => chat.getChat(req, res, database, next));
 
     // forgot-password
     app.post("/forgot-password", async (req, res, next) => {
