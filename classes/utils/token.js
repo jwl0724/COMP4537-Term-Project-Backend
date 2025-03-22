@@ -8,7 +8,7 @@ const prodCookieOptions = {
 }
 
 const devCookieOptions = {
-    httpOnly: true,
+    httpOnly: false,
     secure: false,
     sameSite: 'None',
     maxAge: 1000 * 60 * 60

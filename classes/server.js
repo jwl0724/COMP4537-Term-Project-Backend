@@ -12,13 +12,19 @@ class Server {
     #httpServer;
 
     static productionCorsOption = {
-        origin: EP.ALLOWED_ORIGINS.prod,
+        origin: (origin, callback) => {
+            if (!origin || EP.ALLOWED_ORIGINS.prod.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
         methods: ["GET", "POST", "PUT", "DELETE"],  // methods
         credentials: true, // Required for cookies
         allowedHeaders: ["Content-Type", "Authorization"]
     }
 
-    static devevelopmentCorsOption = {
+    static developmentCorsOption = {
         origin: (origin, callback) => {
             if (/^(http:\/\/localhost|http:\/\/127\.0\.0\.1)/.test(origin)) callback(null, true);
             else callback(new Error("Not allowed by CORS"), false);
@@ -37,7 +43,7 @@ class Server {
 
         // Middlewares
         if (process.env.MODE === "production") this.#server.use(cors(Server.productionCorsOption));
-        else this.#server.use(cors(Server.devevelopmentCorsOption));
+        else this.#server.use(cors(Server.developmentCorsOption));
 
         this.#server.use(cookieParser());
 
