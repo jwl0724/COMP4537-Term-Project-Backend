@@ -31,6 +31,10 @@ class Repository {
             throw error;
         }
     }
+
+    async updateApiCallsLeft(email, newCount) {
+        return await implementation.updateApiCallsLeft(this.#connection, email, newCount);
+    }
 }
 
 module.exports = Repository;

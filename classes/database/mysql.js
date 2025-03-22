@@ -43,4 +43,16 @@ const getAllUsers = async function (pool) {
     }
 };
 
-module.exports = { connectToDB, readUser, writeUser, getAllUsers };
+const updateApiCallsLeft = async function (pool, email, newCount) {
+    try {
+        const [result] = await pool.execute(
+            "UPDATE users SET api_calls_left = ? WHERE email = ?",
+            [newCount, email]
+        );
+        return result;
+    } catch (error) {
+        throw error;
+    }
+};
+
+module.exports = { connectToDB, readUser, writeUser, getAllUsers, updateApiCallsLeft };
