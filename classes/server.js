@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const route = require("./routeBuilder");
 const Repository = require("./database/repository");
 const EP = require("../constants/endpoints")
+const { init } = require("./utils/initializer");
 
 class Server {
     #port
@@ -61,10 +62,17 @@ class Server {
         });
     }
 
-    start() {
-        this.#httpServer = this.#server.listen(this.#port, () => {
-            console.log(`Server started on port ${this.#port}`);
-        });
+    async start() {
+        try {
+            await init();
+
+            this.#httpServer = this.#server.listen(this.#port, () => {
+                console.log(`Server started on port ${this.#port}`);
+            });
+        } catch (err) {
+            console.error("Failed to initialize services:", err.message);
+            process.exit(1);
+        }
     }
 
     stop() {
