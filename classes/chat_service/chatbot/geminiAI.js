@@ -1,8 +1,8 @@
 require("dotenv").config();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Settings to prevent bot from typing harmful responses
 const safetySettings = [
     { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
     { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
@@ -37,13 +37,26 @@ const instructions = `
     Now, respond to the user's message with your best, most energetic SpongeBob voice!
 `;
 
-const createChatbot = () => {
-    const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-pro-latest",
-        systemInstruction: instructions,
-        safetySettings: safetySettings,
-    });
-    return model.startChat();
-};
+class GeminiChatbot {
+    #chatSession = null;
 
-module.exports = createChatbot;
+    async init() {
+        if (this.#chatSession) return;
+
+        const model = genAI.getGenerativeModel({
+            model: "gemini-1.5-pro-latest",
+            systemInstruction: instructions,
+            safetySettings
+        });
+
+        this.#chatSession = await model.startChat();
+        console.log("Chatbot initialized");
+    }
+
+    async sendMessage(text) {
+        if (!this.#chatSession) throw new Error("Chatbot not initialized");
+        return await this.#chatSession.sendMessage(text);
+    }
+}
+
+module.exports = new GeminiChatbot();
