@@ -1,7 +1,5 @@
 const { v4: uuidv4 } = require("uuid");
-
-const SPONGEBOB_MODEL = "weight_tq6pwerrbr4mvbjmtyhbsqe6t";
-const BASE_CDN_URL = "https://cdn-2.fakeyou.com";
+const { SPONGEBOB_MODEL, BASE_CDN_URL } = require("../../../constants/endpoints");
 
 class FakeYouTTS {
     #authCookie = null;
