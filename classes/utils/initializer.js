@@ -1,21 +1,9 @@
 const fakeYouTTS = require("../chat_service/tts_service/fakeYouTTS");
-const createChatbot = require("../chat_service/chatbot/geminiAI");
-
-let chatBot = null;
+const chatbot = require("../chat_service/chatbot/geminiAI");
 
 async function init() {
     await fakeYouTTS.init();
-
-    if (!chatBot) {
-        chatBot = createChatbot();
-        console.log("Chatbot initialized");
-    }
+    await chatbot.init();
 }
 
-function getChatBot() {
-    if (!chatBot) throw new Error("Chatbot not initialized.");
-    return chatBot;
-}
-
-
-module.exports = { init, getChatBot };
+module.exports = { init, chatbot };
