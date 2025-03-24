@@ -1,4 +1,5 @@
 const createChatbot = require("./chatbot/geminiAI");
+const fyTTS = require("./tts_service/fakeYouTTS")
 
 const getResponse = async function (req, res, db, next) {
     try {
@@ -26,13 +27,7 @@ const getResponse = async function (req, res, db, next) {
 
         console.log(`${emotion}: ${finalText}`);
 
-        // const ttsResponse = await fetch(ep.TTS, {
-        //     method: "POST",
-        //     headers: { "Content-Type": "application/json" },
-        //     body: JSON.stringify({ text: chatbotText, emotion: emotion })
-        // });
-
-        // const ttsData = await ttsResponse.json();
+        const audioUrl = await fyTTS.generateAudioFromText(finalText);
 
         if (user.api_calls_left !== -1) {
             await db.updateApiCallsLeft(userEmail, user.api_calls_left - 1);
@@ -42,7 +37,7 @@ const getResponse = async function (req, res, db, next) {
             text: finalText,
             emotion: emotion,
             alert: isAtLimit,
-            // audio: ttsData.audio
+            audioUrl: audioUrl
         });
 
     } catch (error) {
