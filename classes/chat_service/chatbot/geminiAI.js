@@ -37,7 +37,7 @@ const instructions = `
     Now, respond to the user's message with your best, most energetic SpongeBob voice!
 `;
 
-class GeminiChatbot {
+class GeminiAI {
     #chatSession = null;
 
     async init() {
@@ -59,4 +59,4 @@ class GeminiChatbot {
     }
 }
 
-module.exports = new GeminiChatbot();
+module.exports = new GeminiAI();
