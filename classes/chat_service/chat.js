@@ -1,4 +1,4 @@
-const { getChatBot } = require("../utils/initializer");
+const { chatbot } = require("../utils/initializer");
 const fyTTS = require("./tts_service/fakeYouTTS")
 
 const getResponse = async function (req, res, db, next) {
@@ -16,8 +16,8 @@ const getResponse = async function (req, res, db, next) {
             throw new Error("No message provided in the request body.");
         }
 
-        const chatBot = getChatBot();
-        let result = await chatBot.sendMessage(userMessage);
+        const cb = chatbot;
+        let result = await cb.sendMessage(userMessage);
         const chatbotText = result.response.text();
 
         // Extract emotion from the response
