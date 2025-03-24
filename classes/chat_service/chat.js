@@ -1,4 +1,4 @@
-const createChatbot = require("./chatbot/geminiAI");
+const { getChatBot } = require("../utils/initializer");
 const fyTTS = require("./tts_service/fakeYouTTS")
 
 const getResponse = async function (req, res, db, next) {
@@ -16,7 +16,7 @@ const getResponse = async function (req, res, db, next) {
             throw new Error("No message provided in the request body.");
         }
 
-        const chatBot = createChatbot();
+        const chatBot = getChatBot();
         let result = await chatBot.sendMessage(userMessage);
         const chatbotText = result.response.text();
 
