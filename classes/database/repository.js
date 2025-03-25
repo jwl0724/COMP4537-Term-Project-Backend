@@ -1,7 +1,6 @@
 const Database = require("./mysql");
 
 class Repository {
-
     #db;
 
     constructor() {
