@@ -34,6 +34,7 @@ function build(app, db) {
     app.get("/api-stats", verifyToken, logApi(db), (req, res, next) => dataController.getApiStats(req, res, db, next));
     app.get("/endpoint-stats", verifyToken, logApi(db), (req, res, next) => dataController.getEndpointStats(req, res, db, next));
     app.put("/update-api-calls", verifyToken, logApi(db), (req, res, next) => dataController.updateApiCallsLeft(req, res, next));
+    app.delete("/delete-user", verifyToken, logApi(db), (req, res, next) => dataController.deleteUser(req, res, next));
 }
 
 exports.build = build;

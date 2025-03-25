@@ -79,6 +79,25 @@ class DataController {
             next(error);
         }
     }
+
+    async deleteUser(req, res, next) {
+        try {
+            if (req.user.role !== "admin") {
+                return res.status(403).json({ error: "Forbidden: Admins only" });
+            }
+
+            const { email } = req.body;
+
+            if (!email) {
+                return res.status(400).json({ error: "Missing email" });
+            }
+
+            await this.db.deleteUser(email);
+            res.json({ message: "User deleted successfully" });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 module.exports = DataController;

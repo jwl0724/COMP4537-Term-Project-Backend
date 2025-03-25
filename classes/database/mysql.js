@@ -69,6 +69,14 @@ class MySQL {
             [email, method, endpoint]
         );
     }
+
+    async deleteUser(email) {
+        const [result] = await this.#pool.execute(
+            "DELETE FROM users WHERE email = ?",
+            [email]
+        );
+        return result;
+    }
 }
 
 module.exports = MySQL;

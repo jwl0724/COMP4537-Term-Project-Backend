@@ -34,6 +34,10 @@ class Repository {
     async logApiCall(method, endpoint, email) {
         return await this.#db.logApiCall(method, endpoint, email);
     }
+
+    async deleteUser(email) {
+        return await this.#db.deleteUser(email);
+    }
 }
 
 module.exports = Repository;
