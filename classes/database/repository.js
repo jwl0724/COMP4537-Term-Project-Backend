@@ -27,8 +27,8 @@ class Repository {
         return await this.#db.getEndpointStats();
     }
 
-    async getUserApiStats() {
-        return await this.#db.getUserApiStats();
+    async getApiStats() {
+        return await this.#db.getApiStats();
     }
 
     async logApiCall(method, endpoint, email) {

@@ -53,7 +53,7 @@ class MySQL {
         return rows;
     }
 
-    async getUserApiStats() {
+    async getApiStats() {
         const [rows] = await this.#pool.execute(`
             SELECT email, method, COUNT(*) AS requests
             FROM api_calls

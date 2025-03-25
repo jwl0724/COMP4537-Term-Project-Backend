@@ -7,6 +7,7 @@ const { verifyToken } = require("./utils/token");
 
 function build(app, db) {
     const dataController = new DataController(db);
+
     // Auth services
     app.post("/login", (req, res, next) => auth.login(req, res, db, next));
     app.post("/signup", (req, res, next) => auth.signup(req, res, db, next));
@@ -30,7 +31,7 @@ function build(app, db) {
     // Data services
     app.get("/me", verifyToken, logApi(db), (req, res, next) => dataController.getMe(req, res, db, next));
     app.get("/get-all-users", verifyToken, logApi(db), (req, res, next) => dataController.getAllUserData(req, res, db, next));
-    app.get("/api-stats", verifyToken, logApi(db), (req, res, next) => dataController.getUserApiStats(req, res, db, next));
+    app.get("/api-stats", verifyToken, logApi(db), (req, res, next) => dataController.getApiStats(req, res, db, next));
     app.get("/endpoint-stats", verifyToken, logApi(db), (req, res, next) => dataController.getEndpointStats(req, res, db, next));
 }
 

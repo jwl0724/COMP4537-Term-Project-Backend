@@ -52,9 +52,9 @@ class DataController {
         }
     }
 
-    async getUserApiStats(req, res, next) {
+    async getApiStats(req, res, next) {
         try {
-            const stats = await this.db.getUserApiStats();
+            const stats = await this.db.getApiStats();
             res.json(stats);
         } catch (error) {
             next(error);
