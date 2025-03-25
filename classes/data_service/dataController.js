@@ -8,7 +8,9 @@ class DataController {
             const users = await this.db.getAllUsers();
 
             if (!users || users.length === 0) {
-                return res.status(200).json({ message: "No users found", users: [] });
+                const err = new Error("No users found");
+                err.status = 404;
+                throw err;
             }
 
             res.json(users.map(user => ({
@@ -46,13 +48,17 @@ class DataController {
     async updateApiCallsLeft(req, res, next) {
         try {
             if (req.user.role !== "admin") {
-                return res.status(403).json({ error: "Forbidden: Admins only" });
+                const err = new Error("Forbidden: Admins only");
+                err.status = 403;
+                throw err;
             }
 
             const { email, api_calls_left } = req.body;
 
             if (!email || typeof api_calls_left !== "number") {
-                return res.status(400).json({ error: "Invalid body. Use email and api_calls_left" });
+                const err = new Error("Invalid body. Use email and api_calls_left");
+                err.status = 400;
+                throw err;
             }
 
             await this.db.updateApiCallsLeft(email, api_calls_left);
@@ -83,13 +89,17 @@ class DataController {
     async deleteUser(req, res, next) {
         try {
             if (req.user.role !== "admin") {
-                return res.status(403).json({ error: "Forbidden: Admins only" });
+                const err = new Error("Forbidden: Admins only");
+                err.status = 403;
+                throw err;
             }
 
             const { email } = req.body;
 
             if (!email) {
-                return res.status(400).json({ error: "Missing email" });
+                const err = new Error("Missing email");
+                err.status = 400;
+                throw err;
             }
 
             await this.db.deleteUser(email);
