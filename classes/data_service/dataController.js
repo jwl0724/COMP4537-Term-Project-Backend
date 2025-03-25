@@ -43,6 +43,25 @@ class DataController {
         }
     }
 
+    async updateApiCallsLeft(req, res, next) {
+        try {
+            if (req.user.role !== "admin") {
+                return res.status(403).json({ error: "Forbidden: Admins only" });
+            }
+
+            const { email, api_calls_left } = req.body;
+
+            if (!email || typeof api_calls_left !== "number") {
+                return res.status(400).json({ error: "Invalid body. Use email and api_calls_left" });
+            }
+
+            await this.db.updateApiCallsLeft(email, api_calls_left);
+            res.json({ message: "API calls updated successfully" });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async getEndpointStats(req, res, next) {
         try {
             const stats = await this.db.getEndpointStats();
