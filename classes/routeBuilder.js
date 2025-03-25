@@ -29,10 +29,10 @@ function build(app, db) {
     });
 
     // Data services
-    app.get("/me", verifyToken, logApi(db), (req, res, next) => dataController.getMe(req, res, db, next));
-    app.get("/get-all-users", verifyToken, logApi(db), (req, res, next) => dataController.getAllUserData(req, res, db, next));
-    app.get("/api-stats", verifyToken, logApi(db), (req, res, next) => dataController.getApiStats(req, res, db, next));
-    app.get("/endpoint-stats", verifyToken, logApi(db), (req, res, next) => dataController.getEndpointStats(req, res, db, next));
+    app.get("/me", verifyToken, logApi(db), (req, res, next) => dataController.getMe(req, res, next));
+    app.get("/get-all-users", verifyToken, logApi(db), (req, res, next) => dataController.getAllUserData(req, res, next));
+    app.get("/api-stats", verifyToken, logApi(db), (req, res, next) => dataController.getApiStats(req, res, next));
+    app.get("/endpoint-stats", verifyToken, logApi(db), (req, res, next) => dataController.getEndpointStats(req, res, next));
     app.put("/update-api-calls", verifyToken, logApi(db), (req, res, next) => dataController.updateApiCallsLeft(req, res, next));
     app.delete("/delete-user", verifyToken, logApi(db), (req, res, next) => dataController.deleteUser(req, res, next));
 }
