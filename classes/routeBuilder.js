@@ -33,6 +33,7 @@ function build(app, db) {
     app.get("/get-all-users", verifyToken, logApi(db), (req, res, next) => dataController.getAllUserData(req, res, db, next));
     app.get("/api-stats", verifyToken, logApi(db), (req, res, next) => dataController.getApiStats(req, res, db, next));
     app.get("/endpoint-stats", verifyToken, logApi(db), (req, res, next) => dataController.getEndpointStats(req, res, db, next));
+    app.put("/update-api-calls", verifyToken, logApi(db), (req, res, next) => dataController.updateApiCallsLeft(req, res, next));
 }
 
 exports.build = build;
