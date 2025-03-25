@@ -102,7 +102,14 @@ class DataController {
                 throw err;
             }
 
-            await this.db.deleteUser(email);
+            const result = await this.db.deleteUser(email);
+
+            if (result.affectedRows === 0) {
+                const err = new Error("User not found");
+                err.status = 404;
+                throw err;
+            }
+
             res.json({ message: "User deleted successfully" });
         } catch (error) {
             next(error);
