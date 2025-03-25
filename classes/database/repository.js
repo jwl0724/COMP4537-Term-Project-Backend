@@ -1,39 +1,42 @@
-const implementation = require("./mysql"); // Change the import if needing different DB
+const Database = require("./mysql");
 
 class Repository {
-
-    #connection;
+    #db;
 
     constructor() {
-        this.#connection = implementation.connectToDB();
+        this.#db = new Database();
     }
 
     async getUser(email) {
-        try {
-            return await implementation.readUser(this.#connection, email);
-        } catch (error) {
-            throw error;
-        }
+        return await this.#db.readUser(email);
     }
 
     async writeUser(email, hashedPassword, role, apiCallsLeft) {
-        try {
-            return await implementation.writeUser(this.#connection, email, hashedPassword, role, apiCallsLeft);
-        } catch (error) {
-            throw error;
-        }
+        return await this.#db.writeUser(email, hashedPassword, role, apiCallsLeft);
     }
 
     async getAllUsers() {
-        try {
-            return await implementation.getAllUsers(this.#connection);
-        } catch (error) {
-            throw error;
-        }
+        return await this.#db.getAllUsers();
     }
 
     async updateApiCallsLeft(email, newCount) {
-        return await implementation.updateApiCallsLeft(this.#connection, email, newCount);
+        return await this.#db.updateApiCallsLeft(email, newCount);
+    }
+
+    async getEndpointStats() {
+        return await this.#db.getEndpointStats();
+    }
+
+    async getApiStats() {
+        return await this.#db.getApiStats();
+    }
+
+    async logApiCall(method, endpoint, email) {
+        return await this.#db.logApiCall(method, endpoint, email);
+    }
+
+    async deleteUser(email) {
+        return await this.#db.deleteUser(email);
     }
 }
 

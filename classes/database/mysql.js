@@ -1,58 +1,82 @@
 require("dotenv").config();
 const mysql = require("mysql2");
 
-const connectToDB = function () {
-    const pool = mysql.createPool({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        port: process.env.DB_PORT
-    });
-    return pool.promise();
-};
+class MySQL {
+    #pool;
 
-const readUser = async function (pool, email) {
-    try {
-        const [rows] = await pool.execute("SELECT * FROM users WHERE email = ?", [email]);
-        return rows.length ? rows[0] : null;
-    } catch (error) {
-        throw error;
+    constructor() {
+        this.#pool = mysql.createPool({
+            host: process.env.DB_HOST,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
+            port: process.env.DB_PORT,
+        }).promise();
     }
-};
 
-const writeUser = async function (pool, email, hashedPassword, role, apiCallsLeft) {
-    try {
-        const [result] = await pool.execute(
+    async readUser(email) {
+        const [rows] = await this.#pool.execute(
+            "SELECT * FROM users WHERE email = ?",
+            [email]
+        );
+        return rows.length ? rows[0] : null;
+    }
+
+    async writeUser(email, hashedPassword, role, apiCallsLeft) {
+        const [result] = await this.#pool.execute(
             "INSERT INTO users (email, password, role, api_calls_left) VALUES (?, ?, ?, ?)",
             [email, hashedPassword, role, apiCallsLeft]
         );
         return result;
-    } catch (error) {
-        throw error;
     }
-};
 
-
-const getAllUsers = async function (pool) {
-    try {
-        const [rows] = await pool.execute("SELECT * FROM users");
+    async getAllUsers() {
+        const [rows] = await this.#pool.execute("SELECT * FROM users");
         return rows;
-    } catch (error) {
-        throw error;
     }
-};
 
-const updateApiCallsLeft = async function (pool, email, newCount) {
-    try {
-        const [result] = await pool.execute(
+    async updateApiCallsLeft(email, newCount) {
+        const [result] = await this.#pool.execute(
             "UPDATE users SET api_calls_left = ? WHERE email = ?",
             [newCount, email]
         );
         return result;
-    } catch (error) {
-        throw error;
     }
-};
 
-module.exports = { connectToDB, readUser, writeUser, getAllUsers, updateApiCallsLeft };
+    async getEndpointStats() {
+        const [rows] = await this.#pool.execute(`
+            SELECT method, endpoint, COUNT(*) AS requests
+            FROM api_calls
+            GROUP BY method, endpoint
+            ORDER BY requests DESC
+        `);
+        return rows;
+    }
+
+    async getApiStats() {
+        const [rows] = await this.#pool.execute(`
+            SELECT email, method, COUNT(*) AS requests
+            FROM api_calls
+            GROUP BY email, method
+            ORDER BY email
+        `);
+        return rows;
+    }
+
+    async logApiCall(method, endpoint, email) {
+        await this.#pool.execute(
+            "INSERT INTO api_calls (email, method, endpoint) VALUES (?, ?, ?)",
+            [email, method, endpoint]
+        );
+    }
+
+    async deleteUser(email) {
+        const [result] = await this.#pool.execute(
+            "DELETE FROM users WHERE email = ?",
+            [email]
+        );
+        return result;
+    }
+}
+
+module.exports = MySQL;
