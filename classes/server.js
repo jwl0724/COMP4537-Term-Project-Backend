@@ -57,7 +57,7 @@ class Server {
 
         this.#server.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-        route.build(this.#server, this.#database);
+        this.#server.use("/api/v1", route.build(this.#database));
 
         this.#server.use((err, req, res, next) => { // IMPORTANT: THIS NEEDS TO BE LAST OF THE MIDDLEWARES
             console.error("Error:", err.message);
