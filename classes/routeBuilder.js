@@ -1,72 +1,46 @@
-const chat = require("./chat_service/chat");
+const express = require("express");
 const auth = require("./auth_service/auth");
 const reset = require("./reset_service/reset");
-const { clearResources } = require("./utils/cleaner");
-const DataController = require("./data_service/dataController");
+const clearResources = require("./utils/cleaner");
 const { logApi } = require("./utils/logApi");
 const { verifyToken } = require("./utils/token");
+const ChatService = require("./chat_service/chat");
+const DataController = require("./data_service/dataController");
 
-function build(app, db) {
-    const dataController = new DataController(db);
+const build = (db) => {
+    const router = express.Router();
+    const dc = new DataController(db);
+    const cs = new ChatService(db);
+    const clearSession = clearResources(cs);
 
-    // Auth services
-    app.post("/login", (req, res, next) => auth.login(req, res, db, next));
-    app.post("/signup", (req, res, next) => auth.signup(req, res, db, next));
-    app.post("/logout", verifyToken, clearResources, (req, res) => auth.logout(req, res));
+    // Auth routes
+    router.post("/login", (req, res, next) => auth.login(req, res, db, next));
+    router.post("/signup", (req, res, next) => auth.signup(req, res, db, next));
+    router.post("/logout", verifyToken, clearSession, (req, res) => auth.logout(req, res));
 
-    // Password reset services
-    app.post("/reset", verifyToken, logApi(db), (req, res, next) => reset.reset(req, res, db, next));
-
-    // Chat services
-    app.post("/chat", verifyToken, logApi(db), (req, res, next) => chat.getChat(req, res, db, next));
-
-    // forgot-password
-    app.post("/forgotPassword", async (req, res, next) => {
-        console.log('Received request at /forgotPassword route');
+    // Password reset
+    router.post("/reset", verifyToken, logApi(db), (req, res, next) => reset.reset(req, res, db, next));
+    router.post("/forgot-password", async (req, res, next) => {
         try {
             await reset.reset(req, res, db);
         } catch (error) {
             next(error);
         }
     });
-    
 
-    // Reset password route (POST request)
-    app.post("/reset-password", verifyToken, async (req, res, next) => {
-        try {
-            const { newPassword } = req.body;
-            const email = req.email; // email is set by the verifyToken middleware
+    // Chat
+    router.post("/chat", verifyToken, logApi(db), (req, res, next) => cs.handleChat(req, res, next));
 
-            // Generate a hashed password
-            const saltRounds = Math.floor(Math.random() * 3) + 12;
-            const salt = await bcrypt.genSalt(saltRounds);
-            const hashedPassword = await bcrypt.hash(newPassword, salt);
+    // Data
+    router.get("/me", verifyToken, logApi(db), (req, res, next) => dc.getMe(req, res, next));
+    router.get("/get-all-users", verifyToken, logApi(db), (req, res, next) => dc.getAllUserData(req, res, next));
+    router.get("/api-stats", verifyToken, logApi(db), (req, res, next) => dc.getApiStats(req, res, next));
+    router.get("/endpoint-stats", verifyToken, logApi(db), (req, res, next) => dc.getEndpointStats(req, res, next));
+    router.put("/update-api-calls", verifyToken, logApi(db), (req, res, next) => dc.updateApiCallsLeft(req, res, next));
+    router.put("/update-role", verifyToken, logApi(db), (req, res, next) => dc.updateRole(req, res, next));
+    router.delete("/delete-user", verifyToken, logApi(db), (req, res, next) => dc.deleteUser(req, res, next));
 
-            // Update the user's password in the database
-            const updated = await db.updateUserPassword(email, hashedPassword);
+    return router;
+};
 
-            if (!updated) {
-                throw new Error('Failed to update password');
-            }
-
-            // Remove the reset token from the database after successful reset
-            await db.deletePasswordResetToken(email);
-
-            res.status(200).json({ message: 'Password successfully reset' });
-        } catch (error) {
-            next(error);
-        }
-    });
-
-
-    // Data services
-    app.get("/me", verifyToken, logApi(db), (req, res, next) => dataController.getMe(req, res, next));
-    app.get("/get-all-users", verifyToken, logApi(db), (req, res, next) => dataController.getAllUserData(req, res, next));
-    app.get("/api-stats", verifyToken, logApi(db), (req, res, next) => dataController.getApiStats(req, res, next));
-    app.get("/endpoint-stats", verifyToken, logApi(db), (req, res, next) => dataController.getEndpointStats(req, res, next));
-    app.put("/update-api-calls", verifyToken, logApi(db), (req, res, next) => dataController.updateApiCallsLeft(req, res, next));
-    app.put("/update-role", verifyToken, logApi(db), (req, res, next) => dataController.updateRole(req, res, next));
-    app.delete("/delete-user", verifyToken, logApi(db), (req, res, next) => dataController.deleteUser(req, res, next));
-}
-
-exports.build = build;
+module.exports = { build };
