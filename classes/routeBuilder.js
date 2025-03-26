@@ -1,6 +1,7 @@
 const chat = require("./chat_service/chat");
 const auth = require("./auth_service/auth");
 const reset = require("./reset_service/reset");
+const { clearResources } = require("./utils/cleaner");
 const DataController = require("./data_service/dataController");
 const { logApi } = require("./utils/logApi");
 const { verifyToken } = require("./utils/token");
@@ -11,7 +12,7 @@ function build(app, db) {
     // Auth services
     app.post("/login", (req, res, next) => auth.login(req, res, db, next));
     app.post("/signup", (req, res, next) => auth.signup(req, res, db, next));
-    app.post("/logout", (req, res) => auth.logout(req, res))
+    app.post("/logout", clearResources, (req, res) => auth.logout(req, res));
 
     // Password reset services
     app.post("/reset", verifyToken, logApi(db), (req, res, next) => reset.reset(req, res, db, next));

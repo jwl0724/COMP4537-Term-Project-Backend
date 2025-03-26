@@ -1,30 +1,33 @@
-const { chatbot } = require("../utils/initializer");
-const fyTTS = require("./tts_service/fakeYouTTS")
+const cb = require("./chatbot/geminiAI");
+const fyTTS = require("./tts_service/fakeYouTTS");
+
+const chatSessions = new Map();
 
 const getResponse = async function (req, res, db, next) {
     try {
         const userEmail = req.user.email;
         const user = await db.getUser(userEmail);
-
         if (!user) throw new Error("User not found");
 
         const isAtLimit = user.api_calls_left === 0;
-
         const userMessage = req.body.message;
-
         if (!userMessage) {
             throw new Error("No message provided in the request body.");
         }
 
-        const cb = chatbot;
-        let result = await cb.sendMessage(userMessage);
+        let chatbot = chatSessions.get(req.cookies.token);
+        if (!chatbot) {
+            chatbot = new cb();
+            chatSessions.set(req.cookies.token, chatbot);
+        }
+
+        let result = await chatbot.sendMessage(userMessage);
         const chatbotText = result.response.text();
 
         // Extract emotion from the response
         const match = chatbotText.match(/^(happy|sad|angry|disgust|scared|shocked|mock|neutral):\s*(.*)/i);
         const emotion = match ? match[1].toLowerCase() : "neutral";
         const finalText = match ? match[2] : chatbotText;
-
         console.log(`${emotion}: ${finalText}`);
 
         const audioUrl = await fyTTS.generateAudioFromText(finalText);
@@ -46,3 +49,4 @@ const getResponse = async function (req, res, db, next) {
 };
 
 exports.getChat = getResponse;
+exports.sessions = chatSessions;
