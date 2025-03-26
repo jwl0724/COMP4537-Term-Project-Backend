@@ -31,8 +31,8 @@ const signup = async function (req, res, db, next) {
         if (existingUser) {
             throw new Error("User already exists");
         }
-        const saltRounds = Math.floor(Math.random() * 11) + 10;
-        const salt = await bcrypt.genSalt(saltRounds); // TODO: Save this value into database
+        const saltRounds = Math.floor(Math.random() * 3) + 12;
+        const salt = await bcrypt.genSalt(saltRounds);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
         const role = "user";
@@ -48,7 +48,6 @@ const signup = async function (req, res, db, next) {
         setTokenCookie(res, token);
 
         res.status(200).json({ message: "User created successfully" });
-
     } catch (error) {
         next(error);
     }
