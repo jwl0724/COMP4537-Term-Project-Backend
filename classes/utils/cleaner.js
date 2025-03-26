@@ -1,9 +1,11 @@
-const chat = require("../chat_service/chat");
+const clearSession = (chatService) => {
+    return (req, res, next) => {
+        if (req.user?.email) {
+            const deleted = chatService.clearSession(req.user.email);
+            if (deleted) console.info("Chatbot session deleted");
+        }
+        next();
+    };
+};
 
-const clearResources = (req, res, next) => {
-    const deleted = chat.sessions.delete(req.user.email);
-    if (deleted) console.info("A chatbot session has been deleted");
-    next();
-}
-
-module.exports = { clearResources };
+module.exports = clearSession;
