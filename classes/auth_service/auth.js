@@ -31,12 +31,12 @@ const signup = async function (req, res, db, next) {
         if (existingUser) {
             throw new Error("User already exists");
         }
-        const saltRounds = Math.floor(Math.random() * 11) + 10;
-        const salt = await bcrypt.genSalt(12); // TODO: Save this value into database
+        const saltRounds = Math.floor(Math.random() * 3) + 12;
+        const salt = await bcrypt.genSalt(saltRounds);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
-        const role = req.body.role || 'user'; // Defaults to 'user' if no role is passed
-        const apiCallsLeft = role === 'admin' ? -1 : 20; // Admins get -1 (unlimited calls), users get 20
+        const role = "user";
+        const apiCallsLeft = 20;
 
         const output = await db.writeUser(req.body.email, hashedPassword, role, apiCallsLeft);
         if (!output) {
@@ -48,15 +48,14 @@ const signup = async function (req, res, db, next) {
         setTokenCookie(res, token);
 
         res.status(200).json({ message: "User created successfully" });
-
     } catch (error) {
         next(error);
     }
 };
 
 function logout(req, res) {
-    res.clearCookie('token');  // Clear the JWT token cookie
-    res.status(200).json({ message: 'Logged out successfully' });
+    res.clearCookie("token");  // Clear the JWT token cookie
+    res.status(200).json({ message: "Logged out successfully" });
 };
 
 module.exports = { login, signup, logout };

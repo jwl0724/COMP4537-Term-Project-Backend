@@ -68,6 +68,38 @@ class DataController {
         }
     }
 
+    async updateRole(req, res, next) {
+        try {
+            if (req.user.role !== "admin") {
+                const err = new Error("Forbidden: Admins only");
+                err.status = 403;
+                throw err;
+            }
+
+            const { email, role } = req.body;
+
+            if (!email || !role || !["user", "admin"].includes(role)) {
+                const err = new Error("Invalid input. Provide a valid email and role ('user' or 'admin')");
+                err.status = 400;
+                throw err;
+            }
+
+            const result = await this.db.updateRole(email, role);
+            if (result.affectedRows === 0) {
+                const err = new Error("User not found");
+                err.status = 404;
+                throw err;
+            }
+
+            const apiCallsLeft = role === "admin" ? -1 : 20;
+            await this.db.updateApiCallsLeft(email, apiCallsLeft);
+
+            res.json({ message: "User role and API call limit updated successfully" });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async getEndpointStats(req, res, next) {
         try {
             const stats = await this.db.getEndpointStats();

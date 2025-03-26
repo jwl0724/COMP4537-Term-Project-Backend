@@ -23,6 +23,10 @@ class Repository {
         return await this.#db.updateApiCallsLeft(email, newCount);
     }
 
+    async updateRole(email, newRole) {
+        return await this.#db.updateRole(email, newRole);
+    }
+
     async getEndpointStats() {
         return await this.#db.getEndpointStats();
     }
