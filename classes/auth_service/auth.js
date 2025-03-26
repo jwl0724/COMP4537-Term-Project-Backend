@@ -2,7 +2,7 @@ require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const { generateToken, setTokenCookie } = require("../utils/token");
 
-const login = async function (req, res, db, next) {
+const login = async (req, res, db, next) => {
     try {
         const user = await db.getUser(req.body.email);
         if (!user) throw new Error("User not found");
@@ -21,7 +21,7 @@ const login = async function (req, res, db, next) {
     }
 };
 
-const signup = async function (req, res, db, next) {
+const signup = async (req, res, db, next) => {
     try {
         if (!req.body.email || !req.body.password) {
             throw new Error("Email and password are required");
@@ -53,7 +53,7 @@ const signup = async function (req, res, db, next) {
     }
 };
 
-function logout(req, res) {
+const logout = (req, res) => {
     res.clearCookie("token");  // Clear the JWT token cookie
     res.status(200).json({ message: "Logged out successfully" });
 };
