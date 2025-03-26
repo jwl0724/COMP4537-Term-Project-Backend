@@ -4,9 +4,11 @@ const options = {
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "My API",
+            title: "SpongeChat API",
             version: "1.0.0",
-            description: "API documentation"
+            description: "SpongeChat API provides authentication, chatbot interaction, and admin tools " +
+                "for managing users, roles, and API usage. It supports JWT-based access with cookie " +
+                "authentication and tracks per-user API call stats."
         },
         components: {
             securitySchemes: {
