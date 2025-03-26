@@ -3,14 +3,14 @@ const jwt = require('jsonwebtoken');
 const prodCookieOptions = {
     httpOnly: true,   // Prevent JavaScript from accessing the cookie
     secure: true,     // Cookies sent only over https
-    sameSite: 'None', // Cross-site cookies are allowed
+    sameSite: "None", // Cross-site cookies are allowed
     maxAge: 1000 * 60 * 60  // 1 hour expiration
 }
 
 const devCookieOptions = {
-    httpOnly: false,
-    secure: false,
-    sameSite: 'None',
+    httpOnly: true, // Prevents JS access to the cookie
+    secure: false, // Must be false for HTTP (localhost). If true, browser will block the cookie
+    sameSite: "Lax", // Allows sending cookies on same-site navigation and Swagger UI form submissions
     maxAge: 1000 * 60 * 60
 };
 
@@ -88,6 +88,5 @@ function setRefreshTokenCookie(res, refreshToken) {
         throw err;
     }
 }
-
 
 module.exports = { verifyToken, generateToken, setTokenCookie, generateRefreshToken, setRefreshTokenCookie };
