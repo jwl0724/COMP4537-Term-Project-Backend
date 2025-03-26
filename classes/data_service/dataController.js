@@ -1,4 +1,5 @@
 class DataController {
+
     constructor(database) {
         this.db = database;
     }
