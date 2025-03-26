@@ -1,6 +1,6 @@
 /**
  * @swagger
- * /login:
+ * /api/v1/login:
  *   post:
  *     summary: Log in a user
  *     tags: [Auth]
@@ -23,7 +23,7 @@
 
 /**
  * @swagger
- * /signup:
+ * /api/v1/signup:
  *   post:
  *     summary: Register a new user
  *     tags: [Auth]
@@ -46,7 +46,7 @@
 
 /**
  * @swagger
- * /logout:
+ * /api/v1/logout:
  *   post:
  *     summary: Logout the current user
  *     tags: [Auth]
@@ -57,7 +57,7 @@
 
 /**
  * @swagger
- * /reset:
+ * /api/v1/reset:
  *   post:
  *     summary: Reset user password
  *     tags: [Auth]
@@ -70,7 +70,7 @@
 
 /**
  * @swagger
- * /chat:
+ * /api/v1/chat:
  *   post:
  *     summary: Send a message to the chatbot
  *     tags: [Chat]
@@ -92,7 +92,7 @@
 
 /**
  * @swagger
- * /forgot-password:
+ * /api/v1/forgot-password:
  *   post:
  *     summary: Request password reset email
  *     tags: [Auth]
@@ -103,7 +103,7 @@
 
 /**
  * @swagger
- * /me:
+ * /api/v1/me:
  *   get:
  *     summary: Get current user details
  *     tags: [Users]
@@ -116,7 +116,7 @@
 
 /**
  * @swagger
- * /get-all-users:
+ * /api/v1/get-all-users:
  *   get:
  *     summary: Get list of all users
  *     tags: [Users]
@@ -129,7 +129,7 @@
 
 /**
  * @swagger
- * /api-stats:
+ * /api/v1/api-stats:
  *   get:
  *     summary: Get per-user API usage statistics
  *     tags: [Stats]
@@ -142,7 +142,7 @@
 
 /**
  * @swagger
- * /endpoint-stats:
+ * /api/v1/endpoint-stats:
  *   get:
  *     summary: Get endpoint usage statistics
  *     tags: [Stats]
@@ -155,7 +155,7 @@
 
 /**
  * @swagger
- * /update-api-calls:
+ * /api/v1/update-api-calls:
  *   put:
  *     summary: Update API call limit for a user
  *     tags: [Admin]
@@ -180,7 +180,7 @@
 
 /**
  * @swagger
- * /update-role:
+ * /api/v1/update-role:
  *   put:
  *     summary: Update user role (admin-only)
  *     tags: [Admin]
@@ -206,7 +206,7 @@
 
 /**
  * @swagger
- * /delete-user:
+ * /api/v1/delete-user:
  *   delete:
  *     summary: Delete a user (admin-only)
  *     tags: [Admin]
