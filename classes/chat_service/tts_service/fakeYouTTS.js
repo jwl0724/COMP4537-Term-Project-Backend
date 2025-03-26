@@ -22,6 +22,7 @@ class FakeYouTTS {
         if (!res.ok) throw new Error("FakeYou login failed");
 
         const cookie = res.headers.get("set-cookie");
+
         if (!cookie) throw new Error("No session cookie received");
 
         this.#authCookie = cookie.split(";")[0];
@@ -42,7 +43,6 @@ class FakeYouTTS {
 
     async generateAudioFromText(text) {
         if (!text) throw new Error("Missing text");
-
         if (!await this.isLoggedIn()) await this.init();
 
         const headers = {
@@ -51,6 +51,11 @@ class FakeYouTTS {
             "Cookie": this.#authCookie
         };
 
+        const jobToken = await this.submitTTSRequest(text, headers);
+        return await this.pollForResult(jobToken, headers);
+    }
+
+    async submitTTSRequest(text, headers) {
         const res = await fetch("https://api.fakeyou.com/tts/inference", {
             method: "POST",
             headers,
@@ -64,8 +69,10 @@ class FakeYouTTS {
         const data = await res.json();
         if (!data.success) throw new Error(data.error_reason || "TTS request failed");
 
-        const jobToken = data.inference_job_token;
+        return data.inference_job_token;
+    }
 
+    async pollForResult(jobToken, headers) {
         for (let i = 0; i < 30; i++) {
             const result = await fetch(`https://api.fakeyou.com/tts/job/${jobToken}`, { headers });
             const statusData = await result.json();
