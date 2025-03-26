@@ -12,7 +12,7 @@ function build(app, db) {
     // Auth services
     app.post("/login", (req, res, next) => auth.login(req, res, db, next));
     app.post("/signup", (req, res, next) => auth.signup(req, res, db, next));
-    app.post("/logout", clearResources, (req, res) => auth.logout(req, res));
+    app.post("/logout", verifyToken, clearResources, (req, res) => auth.logout(req, res));
 
     // Password reset services
     app.post("/reset", verifyToken, logApi(db), (req, res, next) => reset.reset(req, res, db, next));
@@ -35,6 +35,7 @@ function build(app, db) {
     app.get("/api-stats", verifyToken, logApi(db), (req, res, next) => dataController.getApiStats(req, res, next));
     app.get("/endpoint-stats", verifyToken, logApi(db), (req, res, next) => dataController.getEndpointStats(req, res, next));
     app.put("/update-api-calls", verifyToken, logApi(db), (req, res, next) => dataController.updateApiCallsLeft(req, res, next));
+    app.put("/update-role", verifyToken, logApi(db), (req, res, next) => dataController.updateRole(req, res, next));
     app.delete("/delete-user", verifyToken, logApi(db), (req, res, next) => dataController.deleteUser(req, res, next));
 }
 
