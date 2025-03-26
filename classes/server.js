@@ -1,10 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const route = require("./routeBuilder");
+const { init } = require("./utils/initializer");
+const { build } = require("./routeBuilder");
 const Repository = require("./database/repository");
 const EP = require("../constants/endpoints")
-const { init } = require("./utils/initializer");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swagger_ui/swagger");
 
@@ -57,7 +57,7 @@ class Server {
 
         this.#server.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-        this.#server.use("/api/v1", route.build(this.#database));
+        this.#server.use("/api/v1", build(this.#database));
 
         this.#server.use((err, req, res, next) => { // IMPORTANT: THIS NEEDS TO BE LAST OF THE MIDDLEWARES
             console.error("Error:", err.message);
