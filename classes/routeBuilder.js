@@ -21,13 +21,43 @@ function build(app, db) {
     app.post("/chat", verifyToken, logApi(db), (req, res, next) => chat.getChat(req, res, db, next));
 
     // forgot-password
-    app.post("/forgot-password", async (req, res, next) => {
+    app.post("/forgotPassword", async (req, res, next) => {
+        console.log('Received request at /forgotPassword route');
         try {
             await reset.reset(req, res, db);
         } catch (error) {
             next(error);
         }
     });
+    
+
+    // Reset password route (POST request)
+    app.post("/reset-password", verifyToken, async (req, res, next) => {
+        try {
+            const { newPassword } = req.body;
+            const email = req.email; // email is set by the verifyToken middleware
+
+            // Generate a hashed password
+            const saltRounds = Math.floor(Math.random() * 3) + 12;
+            const salt = await bcrypt.genSalt(saltRounds);
+            const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+            // Update the user's password in the database
+            const updated = await db.updateUserPassword(email, hashedPassword);
+
+            if (!updated) {
+                throw new Error('Failed to update password');
+            }
+
+            // Remove the reset token from the database after successful reset
+            await db.deletePasswordResetToken(email);
+
+            res.status(200).json({ message: 'Password successfully reset' });
+        } catch (error) {
+            next(error);
+        }
+    });
+
 
     // Data services
     app.get("/me", verifyToken, logApi(db), (req, res, next) => dataController.getMe(req, res, next));
