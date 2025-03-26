@@ -5,6 +5,8 @@ const route = require("./routeBuilder");
 const Repository = require("./database/repository");
 const EP = require("../constants/endpoints")
 const { init } = require("./utils/initializer");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./swagger_ui/swagger");
 
 class Server {
     #port
@@ -53,6 +55,8 @@ class Server {
 
         this.#server.use(express.json());
 
+        this.#server.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
         route.build(this.#server, this.#database);
 
         this.#server.use((err, req, res, next) => { // IMPORTANT: THIS NEEDS TO BE LAST OF THE MIDDLEWARES
@@ -65,7 +69,6 @@ class Server {
     async start() {
         try {
             await init();
-
             this.#httpServer = this.#server.listen(this.#port, () => {
                 console.log(`Server started on port ${this.#port}`);
             });
