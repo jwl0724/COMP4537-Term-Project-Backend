@@ -10,7 +10,7 @@ const DataController = require("./data_service/dataController");
 const build = (db) => {
     const router = express.Router();
     const dc = new DataController(db);
-    const cs = new ChatService();
+    const cs = new ChatService(db);
     const clearSession = clearResources(cs);
 
     // Auth routes
@@ -29,7 +29,7 @@ const build = (db) => {
     });
 
     // Chat
-    router.post("/chat", verifyToken, logApi(db), (req, res, next) => cs.handleChat(req, res, db, next));
+    router.post("/chat", verifyToken, logApi(db), (req, res, next) => cs.handleChat(req, res, next));
 
     // Data
     router.get("/me", verifyToken, logApi(db), (req, res, next) => dc.getMe(req, res, next));

@@ -4,6 +4,10 @@ const fyTTS = require("./tts_service/fakeYouTTS");
 class ChatService {
     #sessions = new Map();
 
+    constructor(database) {
+        this.db = database;
+    }
+
     getSession(email) {
         if (!this.#sessions.has(email)) {
             this.#sessions.set(email, new cb());
@@ -15,10 +19,10 @@ class ChatService {
         return this.#sessions.delete(email);
     }
 
-    async handleChat(req, res, db, next) {
+    async handleChat(req, res, next) {
         try {
             const userEmail = req.user.email;
-            const user = await db.getUser(userEmail);
+            const user = await this.db.getUser(userEmail);
             if (!user) throw new Error("User not found");
 
             const isAtLimit = user.api_calls_left === 0;
@@ -38,7 +42,7 @@ class ChatService {
             const audioUrl = await fyTTS.generateAudioFromText(finalText);
 
             if (user.api_calls_left !== -1) {
-                await db.updateApiCallsLeft(userEmail, user.api_calls_left - 1);
+                await this.db.updateApiCallsLeft(userEmail, user.api_calls_left - 1);
             }
 
             res.json({
