@@ -23,11 +23,11 @@ class MySQL {
     }
 
     async writeUser(email, hashedPassword, role, apiCallsLeft) {
-        const [result] = await this.#pool.execute(
+        const [rows] = await this.#pool.execute(
             "INSERT INTO users (email, password, role, api_calls_left) VALUES (?, ?, ?, ?)",
             [email, hashedPassword, role, apiCallsLeft]
         );
-        return result;
+        return rows;
     }
 
     async getAllUsers() {
@@ -36,11 +36,19 @@ class MySQL {
     }
 
     async updateApiCallsLeft(email, newCount) {
-        const [result] = await this.#pool.execute(
+        const [rows] = await this.#pool.execute(
             "UPDATE users SET api_calls_left = ? WHERE email = ?",
             [newCount, email]
         );
-        return result;
+        return rows;
+    }
+
+    async updateRole(email, newRole) {
+        const [rows] = await this.#pool.execute(
+            "UPDATE users SET role = ? WHERE email = ?",
+            [newRole, email]
+        );
+        return rows;
     }
 
     async getEndpointStats() {
@@ -71,11 +79,11 @@ class MySQL {
     }
 
     async deleteUser(email) {
-        const [result] = await this.#pool.execute(
+        const [rows] = await this.#pool.execute(
             "DELETE FROM users WHERE email = ?",
             [email]
         );
-        return result;
+        return rows;
     }
 }
 
