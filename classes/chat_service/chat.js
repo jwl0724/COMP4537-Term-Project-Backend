@@ -15,10 +15,10 @@ const getResponse = async function (req, res, db, next) {
             throw new Error("No message provided in the request body.");
         }
 
-        let chatbot = chatSessions.get(req.cookies.token);
+        let chatbot = chatSessions.get(userEmail);
         if (!chatbot) {
             chatbot = new cb();
-            chatSessions.set(req.cookies.token, chatbot);
+            chatSessions.set(userEmail, chatbot);
         }
 
         let result = await chatbot.sendMessage(userMessage);
