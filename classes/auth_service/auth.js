@@ -55,8 +55,8 @@ const signup = async function (req, res, db, next) {
 };
 
 function logout(req, res) {
-    res.clearCookie('token');  // Clear the JWT token cookie
-    res.status(200).json({ message: 'Logged out successfully' });
+    res.clearCookie("token");  // Clear the JWT token cookie
+    res.status(200).json({ message: "Logged out successfully" });
 };
 
 module.exports = { login, signup, logout };
