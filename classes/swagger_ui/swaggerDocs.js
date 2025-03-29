@@ -39,6 +39,8 @@
  *                 type: string
  *               password:
  *                 type: string
+ *               user_name:
+ *                 type: string
  *     responses:
  *       200:
  *         description: User created

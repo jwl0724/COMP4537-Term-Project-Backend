@@ -28,9 +28,11 @@ const signup = async (req, res, db, next) => {
         }
 
         const existingUser = await db.getUser(req.body.email);
+
         if (existingUser) {
             throw new Error("User already exists");
         }
+
         const saltRounds = Math.floor(Math.random() * 3) + 12;
         const salt = await bcrypt.genSalt(saltRounds);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -38,7 +40,7 @@ const signup = async (req, res, db, next) => {
         const role = "user";
         const apiCallsLeft = 20;
 
-        const output = await db.writeUser(req.body.email, hashedPassword, role, apiCallsLeft);
+        const output = await db.writeUser(req.body.email, hashedPassword, role, apiCallsLeft, req.body.user_name);
         if (!output) {
             throw new Error("Error creating user");
         }

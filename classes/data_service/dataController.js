@@ -16,9 +16,10 @@ class DataController {
 
             res.json(users.map(user => ({
                 id: user.id,
+                user_name: user.user_name,
                 email: user.email,
                 role: user.role,
-                api_calls_left: user.api_calls_left
+                api_calls_left: user.api_calls_left,
             })));
         } catch (error) {
             next(error);
@@ -37,6 +38,7 @@ class DataController {
             }
 
             res.json({
+                user_name: user.user_name,
                 email: user.email,
                 role: user.role,
                 api_calls_left: user.api_calls_left
