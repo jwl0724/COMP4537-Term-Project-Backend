@@ -22,10 +22,10 @@ class MySQL {
         return rows.length ? rows[0] : null;
     }
 
-    async writeUser(email, hashedPassword, role, apiCallsLeft) {
+    async writeUser(email, hashedPassword, role, apiCallsLeft, userName) {
         const [rows] = await this.#pool.execute(
-            "INSERT INTO users (email, password, role, api_calls_left) VALUES (?, ?, ?, ?)",
-            [email, hashedPassword, role, apiCallsLeft]
+            "INSERT INTO users (email, password, role, api_calls_left, user_name) VALUES (?, ?, ?, ?, ?)",
+            [email, hashedPassword, role, apiCallsLeft, userName]
         );
         return rows;
     }

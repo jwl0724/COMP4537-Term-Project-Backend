@@ -11,8 +11,8 @@ class Repository {
         return await this.#db.readUser(email);
     }
 
-    async writeUser(email, hashedPassword, role, apiCallsLeft) {
-        return await this.#db.writeUser(email, hashedPassword, role, apiCallsLeft);
+    async writeUser(email, hashedPassword, role, apiCallsLeft, userName) {
+        return await this.#db.writeUser(email, hashedPassword, role, apiCallsLeft, userName);
     }
 
     async getAllUsers() {
