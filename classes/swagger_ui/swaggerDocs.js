@@ -62,10 +62,26 @@
  *     summary: Reset user password
  *     tags: [Auth]
  *     security:
- *       - cookieAuth: []
+ *       - cookieAuth: []  # Ensures the user is authenticated via the cookie
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, newPassword]
+ *             properties:
+ *               email:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
  *     responses:
  *       200:
- *         description: Password reset
+ *         description: Password reset successfully
+ *       400:
+ *         description: Invalid or expired reset token
+ *       500:
+ *         description: Server error while resetting the password
  */
 
 /**
@@ -96,9 +112,23 @@
  *   post:
  *     summary: Request password reset email
  *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email]
+ *             properties:
+ *               email:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Email sent if account exists
+ *       404:
+ *         description: Account with provided email does not exist
+ *       500:
+ *         description: Server error while sending the reset email
  */
 
 /**

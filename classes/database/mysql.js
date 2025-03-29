@@ -103,6 +103,16 @@ class MySQL {
         );
         return rows.length ? rows[0] : null;
     }
+
+    // In mysql.js (MySQL class)
+    async updateUserPassword(email, hashedPassword) {
+        const [rows] = await this.#pool.execute(
+            "UPDATE users SET password = ? WHERE email = ?",
+            [hashedPassword, email]
+        );
+        return rows.affectedRows > 0; // Returns true if the password was updated successfully
+    }
+
 }
 
 module.exports = MySQL;

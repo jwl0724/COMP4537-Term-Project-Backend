@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 class DataController {
 
     constructor(database) {
@@ -144,6 +145,43 @@ class DataController {
             }
 
             res.json({ message: "User deleted successfully" });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async resetPassword(req, res, next) {
+        try {
+            const { email, newPassword } = req.body;
+
+            // Step 1: Validate input
+            if (!email || !newPassword) {
+                const err = new Error("Email and new password are required");
+                err.status = 400;
+                throw err;
+            }
+
+            // Step 2: Check if user exists
+            const user = await this.db.getUser(email); // Use the Repository's getUser method
+            if (!user) {
+                const err = new Error("User not found");
+                err.status = 404;
+                throw err;
+            }
+
+            // Step 3: Hash the new password
+            const hashedPassword = await bcrypt.hash(newPassword, 12); // Use bcrypt to hash
+
+            // Step 4: Update the password in the database
+            const updateSuccess = await this.db.updateUserPassword(email, hashedPassword); // Call updateUserPassword
+            if (!updateSuccess) {
+                const err = new Error("Failed to update password");
+                err.status = 500;
+                throw err;
+            }
+
+            // Step 5: Respond with success
+            res.json({ message: "Password successfully reset" });
         } catch (error) {
             next(error);
         }

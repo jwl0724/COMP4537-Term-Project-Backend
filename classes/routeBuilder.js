@@ -6,6 +6,7 @@ const { logApi } = require("./utils/logApi");
 const { verifyToken } = require("./utils/token");
 const ChatService = require("./chat_service/chat");
 const DataController = require("./data_service/dataController");
+const { forgotPassword, resetPassword } = require('./reset_service/reset');
 
 const build = (db) => {
     const router = express.Router();
@@ -18,17 +19,14 @@ const build = (db) => {
     router.post("/signup", (req, res, next) => auth.signup(req, res, db, next));
     router.post("/logout", verifyToken, clearSession, (req, res) => auth.logout(req, res));
 
-    // Password reset
-    router.post("/reset", verifyToken, logApi(db), (req, res, next) => reset.reset(req, res, db, next));
-    router.post("/forgotPassword", async (req, res) => {
-        try {
-            console.log("DB object:", db);
-
-            await reset.reset(req, res);
-        } catch (error) {
-            console.log(error);
-        }
+    router.post('/forgot-password', async (req, res, next) => {
+        await forgotPassword(req, res, db, next);
     });
+
+    router.post('/reset', verifyToken, logApi(db), async (req, res, next) => {
+        dc.resetPassword(req, res, next); // Call the resetPassword method in DataController
+    });
+
 
 
     // Chat

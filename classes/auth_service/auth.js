@@ -44,6 +44,7 @@ const signup = async (req, res, db, next) => {
         }
 
         const token = generateToken({ email: req.body.email, role });
+        console.log("token is ", token);
 
         setTokenCookie(res, token);
 
