@@ -166,26 +166,30 @@ async function sendResetEmail(email) {
 //         next(error);
 //     }
 // };
-const reset = async function (req, res, db, next) {
+const reset = async function(req, res, db) {
     try {
+        console.log("db object:", db);  // Log to check if it's the correct instance
+
         const { email } = req.body;
+        const user = await db.getUser(email);
+        console.log("User fetched:", user);
 
-        console.log(`Received password reset request for email: ${email}`);
+        if (!user) return res.status(404).json({ error: "User not found" });
 
-        // Just send the reset email without checking or storing tokens
-        await sendResetEmail(email);
+        // Generate a password reset token (JWT) that expires in 1 hour
+        const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        console.log(`Password reset email sent to: ${email}`);
+        // Send reset email with the token link
+        await sendResetEmail(email, token);
 
-        res.status(200).json({ message: 'Password reset email sent' });
-
+        res.status(200).json({ message: "Password reset email sent" });
     } catch (error) {
-        console.error('Error during password reset process:', error);
-        next(error);
+        console.error("Password reset error:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 };
 
-module.exports = { reset };
+
 
 
 

@@ -20,13 +20,16 @@ const build = (db) => {
 
     // Password reset
     router.post("/reset", verifyToken, logApi(db), (req, res, next) => reset.reset(req, res, db, next));
-    router.post("/forgot-password", async (req, res, next) => {
+    router.post("/forgotPassword", async (req, res) => {
         try {
-            await reset.reset(req, res, db);
+            console.log("DB object:", db);
+
+            await reset.reset(req, res);
         } catch (error) {
-            next(error);
+            console.log(error);
         }
     });
+
 
     // Chat
     router.post("/chat", verifyToken, logApi(db), (req, res, next) => cs.handleChat(req, res, next));
