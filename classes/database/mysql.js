@@ -84,25 +84,7 @@ class MySQL {
             [email]
         );
         return rows;
-    }
-
-    // Create password reset token for the user
-    async storePasswordResetToken(email, token, expirationTime) {
-        const [rows] = await this.#pool.execute(
-            "INSERT INTO password_reset_tokens (email, token, expiration_time) VALUES (?, ?, ?)",
-            [email, token, expirationTime]
-        );
-        return rows;
-    }
-
-    // Retrieve password reset token data by token
-    async getPasswordResetToken(token) {
-        const [rows] = await this.#pool.execute(
-            "SELECT * FROM password_reset_tokens WHERE token = ?",
-            [token]
-        );
-        return rows.length ? rows[0] : null;
-    }
+    } 
 
     // In mysql.js (MySQL class)
     async updateUserPassword(email, hashedPassword) {

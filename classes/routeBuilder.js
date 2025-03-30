@@ -19,12 +19,12 @@ const build = (db) => {
     router.post("/signup", (req, res, next) => auth.signup(req, res, db, next));
     router.post("/logout", verifyToken, clearSession, (req, res) => auth.logout(req, res));
 
-    router.post('/forgot-password', async (req, res, next) => {
-        await dc.forgotPassword(req, res, next);
+    router.post('/forgot-password', verifyToken, logApi(db), async (req, res, next) => {
+        await reset.forgotPassword(req, res, next)
     });
 
     router.post('/reset', verifyToken, logApi(db), async (req, res, next) => {
-        dc.resetPassword(req, res, next); // Call the resetPassword method in DataController
+        dc.resetPassword(req, res, next); 
     });
 
     router.put('/update-password', verifyToken, logApi(db), (req, res, next) => {
