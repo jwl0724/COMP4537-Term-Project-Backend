@@ -1,5 +1,5 @@
-const bcrypt = require("bcryptjs");
-const jwt = require('jsonwebtoken');
+// This code was assisted by ChatGPT, OpenAI.
+
 class DataController {
 
     constructor(database) {

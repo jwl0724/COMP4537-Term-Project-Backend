@@ -1,3 +1,5 @@
+// This code was assisted by ChatGPT, OpenAI.
+
 const bcrypt = require("bcryptjs");
 const { generateToken, setTokenCookie } = require("../utils/token");
 
@@ -33,7 +35,7 @@ class AuthService {
             const existingUser = await this.db.getUser(email);
             if (existingUser) throw new Error("User already exists");
 
-            const saltRounds = Math.floor(Math.random() * 3) + 12;
+            const saltRounds = Math.floor(Math.random() * 3) + 12; // randomized salt rounds
             const salt = await bcrypt.genSalt(saltRounds);
             const hashedPassword = await bcrypt.hash(password, salt);
 

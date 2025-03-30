@@ -1,3 +1,5 @@
+// This code was assisted by ChatGPT, OpenAI.
+
 const jwt = require("jsonwebtoken");
 
 const prodCookieOptions = {

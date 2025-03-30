@@ -1,3 +1,5 @@
+// This code was assisted by ChatGPT, OpenAI.
+
 const { v4: uuidv4 } = require("uuid");
 const { SPONGEBOB_MODEL, BASE_CDN_URL } = require("../../../constants/endpoints");
 

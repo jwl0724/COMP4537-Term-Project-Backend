@@ -1,3 +1,5 @@
+// This code was assisted by ChatGPT, OpenAI.
+
 const cb = require("./chatbot/geminiAI");
 const fyTTS = require("./tts_service/fakeYouTTS");
 

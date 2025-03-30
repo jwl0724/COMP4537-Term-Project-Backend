@@ -1,13 +1,14 @@
+// This code was assisted by ChatGPT, OpenAI.
+
 const { v4: uuidv4 } = require("uuid");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcryptjs");
 
 class ResetService {
     #tokenStorage = new Map();
-    #db;
 
     constructor(db) {
-        this.#db = db;
+        this.db = db;
     }
 
     forgotPassword = async (req, res, next) => {
@@ -15,7 +16,7 @@ class ResetService {
             const email = req.body.email;
             if (!email) throw new Error("Email is required");
 
-            const user = await this.#db.getUser(email);
+            const user = await this.db.getUser(email);
             if (!user) throw new Error("User not found");
 
             const token = uuidv4();
@@ -46,14 +47,14 @@ class ResetService {
                 throw new Error("Invalid or expired token");
             }
 
-            const user = await this.#db.getUser(stored.email);
+            const user = await this.db.getUser(stored.email);
             if (!user) throw new Error("User not found");
 
             const saltRounds = Math.floor(Math.random() * 3) + 12;
             const salt = await bcrypt.genSalt(saltRounds);
             const hashed = await bcrypt.hash(newPassword, salt);
 
-            await this.#db.updatePassword(stored.email, hashed);
+            await this.db.updatePassword(stored.email, hashed);
 
             this.#tokenStorage.delete(token); // One-time use
 

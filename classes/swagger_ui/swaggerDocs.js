@@ -1,3 +1,5 @@
+// This code was assisted by ChatGPT, OpenAI.
+
 /**
  * @swagger
  * /api/v1/login:
