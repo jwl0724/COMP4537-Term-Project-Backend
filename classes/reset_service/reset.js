@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
 
-async function forgotPassword(req, res, db, next) {
+const forgotPassword = async (req, res, db, next) => {
     try {
         const email = req.body.email;
 
@@ -17,25 +18,21 @@ async function forgotPassword(req, res, db, next) {
             throw error;
         }
 
-        // Generate reset token (e.g., using JWT or a random token)
         const resetToken = generateResetToken(email);
-
-        // Send email with the reset link (using nodemailer)
         await sendResetEmail(email, resetToken);
 
         res.json({ message: "Password reset email sent" });
     } catch (error) {
         next(error);
     }
-}
+};
 
-// Helper to send reset email
-async function sendResetEmail(email, resetToken) {
+const sendResetEmail = async (email, resetToken) => {
     const transporter = nodemailer.createTransport({
-        service: 'gmail', // Or another email service
+        service: 'gmail',
         auth: {
-            user: process.env.EMAIL_USER,  // From environment variables
-            pass: process.env.EMAIL_PASS   // From environment variables
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
         }
     });
 
@@ -49,14 +46,17 @@ async function sendResetEmail(email, resetToken) {
     };
 
     return transporter.sendMail(mailOptions);
-}
+};
 
-// Helper to generate a reset token
-function generateResetToken(email) {
-    // Generate a token using JWT, random string, or another secure method
-    const jwt = require('jsonwebtoken');
-    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '5m' });
-    return token;
+const generateResetToken = (email) => {
+    try {
+        const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "5m" });
+        return token;
+    } catch (error) {
+        const err = new Error("Error generating token: " + error.message);
+        err.status = 500;
+        throw err;
+    }
 }
 
 module.exports = { forgotPassword, sendResetEmail, generateResetToken };

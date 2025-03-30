@@ -59,34 +59,4 @@ const setTokenCookie = (res, token) => {
     }
 }
 
-const generateRefreshToken = (user) => {
-    try {
-        const refreshToken = jwt.sign(
-            { email: user.email },
-            process.env.JWT_REFRESH_SECRET,
-            { expiresIn: "7d" }  // Refresh token expiration time (7 days)
-        );
-        return refreshToken;
-    } catch (error) {
-        const err = new Error("Error generating refresh token: " + error.message);
-        err.status = 500;
-        throw err;
-    }
-}
-
-const setRefreshTokenCookie = (res, refreshToken) => {
-    try {
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            maxAge: 1000 * 60 * 60 * 24 * 7,  // 7 days expiration
-            sameSite: "None"
-        });
-    } catch (error) {
-        const err = new Error("Error setting refresh token cookie: " + error.message);
-        err.status = 500;
-        throw err;
-    }
-}
-
-module.exports = { verifyToken, generateToken, setTokenCookie, generateRefreshToken, setRefreshTokenCookie };
+module.exports = { verifyToken, generateToken, setTokenCookie };
