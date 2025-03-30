@@ -84,15 +84,14 @@ class MySQL {
             [email]
         );
         return rows;
-    } 
+    }
 
-    // In mysql.js (MySQL class)
-    async updateUserPassword(email, hashedPassword) {
+    async updatePassword(email, hashedPassword) {
         const [rows] = await this.#pool.execute(
             "UPDATE users SET password = ? WHERE email = ?",
             [hashedPassword, email]
         );
-        return rows.affectedRows > 0; // Returns true if the password was updated successfully
+        return rows.affectedRows > 0;
     }
 
 }

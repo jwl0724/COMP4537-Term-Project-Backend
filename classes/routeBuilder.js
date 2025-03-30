@@ -6,7 +6,6 @@ const { logApi } = require("./utils/logApi");
 const { verifyToken } = require("./utils/token");
 const ChatService = require("./chat_service/chat");
 const DataController = require("./data_service/dataController");
-const { forgotPassword, resetPassword } = require('./reset_service/reset');
 
 const build = (db) => {
     const router = express.Router();
@@ -19,18 +18,9 @@ const build = (db) => {
     router.post("/signup", (req, res, next) => auth.signup(req, res, db, next));
     router.post("/logout", verifyToken, clearSession, (req, res) => auth.logout(req, res));
 
-    router.post('/forgot-password', verifyToken, logApi(db), async (req, res, next) => {
-        await reset.forgotPassword(req, res, next)
-    });
-
-    router.post('/reset', verifyToken, logApi(db), async (req, res, next) => {
-        dc.resetPassword(req, res, next); 
-    });
-
-    router.put('/update-password', verifyToken, logApi(db), (req, res, next) => {
-        dc.updatePassword(req, res, next);
-      });
-
+    // Reset
+    router.post('/forgot-password', (req, res, next) => reset.forgotPassword(req, res, db, next));
+    router.post('/reset', (req, res, next) => dc.resetPassword(req, res, next));
 
     // Chat
     router.post("/chat", verifyToken, logApi(db), (req, res, next) => cs.handleChat(req, res, next));
@@ -42,6 +32,7 @@ const build = (db) => {
     router.get("/endpoint-stats", verifyToken, logApi(db), (req, res, next) => dc.getEndpointStats(req, res, next));
     router.put("/update-api-calls", verifyToken, logApi(db), (req, res, next) => dc.updateApiCallsLeft(req, res, next));
     router.put("/update-role", verifyToken, logApi(db), (req, res, next) => dc.updateRole(req, res, next));
+    router.put('/update-password', verifyToken, logApi(db), (req, res, next) => dc.updatePassword(req, res, next));
     router.delete("/delete-user", verifyToken, logApi(db), (req, res, next) => dc.deleteUser(req, res, next));
 
     return router;

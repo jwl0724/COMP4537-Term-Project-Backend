@@ -1,19 +1,16 @@
-const bcrypt = require("bcryptjs");
 const nodemailer = require('nodemailer');
 
-async function forgotPassword(req, res, next) {
+async function forgotPassword(req, res, db, next) {
     try {
-        const email  = req.body.email;
-        console.log("email ", email)
-        console.log("req.body.email", req.body.email)
-        
+        const email = req.body.email;
+
         if (!email) {
             const error = new Error("Email is required");
             error.status = 400;
             throw error;
         }
 
-        const user = await this.db.getUser(email);
+        const user = await db.getUser(email);
         if (!user) {
             const error = new Error("User not found");
             error.status = 404;
@@ -21,10 +18,10 @@ async function forgotPassword(req, res, next) {
         }
 
         // Generate reset token (e.g., using JWT or a random token)
-        const resetToken = this.generateResetToken(email); // Implement this function
+        const resetToken = generateResetToken(email);
 
         // Send email with the reset link (using nodemailer)
-        await this.sendResetEmail(email, resetToken); // Implement this function
+        await sendResetEmail(email, resetToken);
 
         res.json({ message: "Password reset email sent" });
     } catch (error) {
@@ -42,8 +39,8 @@ async function sendResetEmail(email, resetToken) {
         }
     });
 
-    const resetLink = `http://yourfrontend.com/reset-password?token=${resetToken}`;
-    
+    const resetLink = `https://comp-4537-term-project-frontend-three.vercel.app/reset-password?token=${resetToken}`;
+
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
@@ -58,7 +55,7 @@ async function sendResetEmail(email, resetToken) {
 function generateResetToken(email) {
     // Generate a token using JWT, random string, or another secure method
     const jwt = require('jsonwebtoken');
-    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '5m' }); // Example 5 minute expiration
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '5m' });
     return token;
 }
 

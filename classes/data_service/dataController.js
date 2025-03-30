@@ -1,5 +1,4 @@
 const bcrypt = require("bcryptjs");
-const nodemailer = require('nodemailer');
 class DataController {
 
     constructor(database) {
@@ -153,83 +152,85 @@ class DataController {
 
     async updatePassword(req, res, next) {
         try {
-          const { currentPassword, newPassword } = req.body;
-    
-          if (!currentPassword || !newPassword) {
-            const err = new Error("Both current and new passwords are required");
-            err.status = 400;
-            throw err;
-          }
-    
-          const user = await this.db.getUser(req.user.email);
-          if (!user) {
-            const error = new Error("User not found");
-            error.status = 404;
-            throw error;
-          }
-    
-          // Check if current password is correct
-          const isMatch = await bcrypt.compare(currentPassword, user.password);
-          if (!isMatch) {
-            const error = new Error("Current password is incorrect");
-            error.status = 400;
-            throw error;
-          }
-    
-          // Hash the new password
-          const hashedPassword = await bcrypt.hash(newPassword, 12);
-    
-          // Update password in the database
-          const updateSuccess = await this.db.updateUserPassword(req.user.email, hashedPassword);
-          if (!updateSuccess) {
-            const err = new Error("Failed to update password");
-            err.status = 500;
-            throw err;
-          }
-    
-          res.json({ message: "Password updated successfully" });
-        } catch (error) {
-          next(error);
-        }
-      }
+            const { currentPassword, newPassword } = req.body;
 
-      async resetPassword(req, res, next) {
-        try {
-          const { token, newPassword } = req.body;
-    
-          if (!token || !newPassword) {
-            const err = new Error("Token and new password are required");
-            err.status = 400;
-            throw err;
-          }
-    
-          // Decode the token
-          const decoded = jwt.verify(token, JWT_SECRET);
-    
-          const userEmail = decoded.email;
-          const user = await this.db.getUser(userEmail);
-          if (!user) {
-            const err = new Error("User not found");
-            err.status = 404;
-            throw err;
-          }
-    
-          // Hash the new password
-          const hashedPassword = await bcrypt.hash(newPassword, 12);
-    
-          // Update password in the database
-          const updateSuccess = await this.db.updateUserPassword(userEmail, hashedPassword);
-          if (!updateSuccess) {
-            const err = new Error("Failed to reset password");
-            err.status = 500;
-            throw err;
-          }
-    
-          res.json({ message: "Password reset successfully" });
+            if (!currentPassword || !newPassword) {
+                const err = new Error("Both current and new passwords are required");
+                err.status = 400;
+                throw err;
+            }
+
+            const user = await this.db.getUser(req.user.email);
+            if (!user) {
+                const error = new Error("User not found");
+                error.status = 404;
+                throw error;
+            }
+
+            // Check if current password is correct
+            const isMatch = await bcrypt.compare(currentPassword, user.password);
+            if (!isMatch) {
+                const error = new Error("Current password is incorrect");
+                error.status = 400;
+                throw error;
+            }
+
+            // Hash the new password
+            const saltRounds = Math.floor(Math.random() * 3) + 12;
+            const salt = await bcrypt.genSalt(saltRounds);
+            const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+            // Update password in the database
+            const updateSuccess = await this.db.updatePassword(req.user.email, hashedPassword);
+            if (!updateSuccess) {
+                const err = new Error("Failed to update password");
+                err.status = 500;
+                throw err;
+            }
+
+            res.json({ message: "Password updated successfully" });
         } catch (error) {
-          next(error);
+            next(error);
         }
-      }
+    }
+
+    async resetPassword(req, res, next) {
+        try {
+            const { token, newPassword } = req.body;
+
+            if (!token || !newPassword) {
+                const err = new Error("Token and new password are required");
+                err.status = 400;
+                throw err;
+            }
+
+            // Decode the token
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+            const userEmail = decoded.email;
+            const user = await this.db.getUser(userEmail);
+            if (!user) {
+                const err = new Error("User not found");
+                err.status = 404;
+                throw err;
+            }
+
+            // Hash the new password
+            const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+            // Update password in the database
+            const updateSuccess = await this.db.updatePassword(userEmail, hashedPassword);
+            if (!updateSuccess) {
+                const err = new Error("Failed to reset password");
+                err.status = 500;
+                throw err;
+            }
+
+            res.json({ message: "Password reset successfully" });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 module.exports = DataController;

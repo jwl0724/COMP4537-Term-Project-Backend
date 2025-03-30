@@ -43,8 +43,8 @@ class Repository {
         return await this.#db.deleteUser(email);
     }
 
-    async updateUserPassword(email, hashedPassword) {
-        return await this.#db.updateUserPassword(email, hashedPassword);
+    async updatePassword(email, hashedPassword) {
+        return await this.#db.updatePassword(email, hashedPassword);
     }
 }
 
