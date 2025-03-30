@@ -1,6 +1,6 @@
 # COMP4537-Term-Project-Backend
 
-The backend for the webapp where you talk to Spongebob
+The backend for the webapp where you talk to Spongebob, you can try it [here](https://comp-4537-term-project-frontend-three.vercel.app/).
 
 Instructions:
 
