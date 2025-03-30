@@ -56,6 +56,8 @@ class Server {
 
         this.#server.use(express.json());
 
+        this.#server.get("/docs/swagger.json", (req, res) => res.json(swaggerSpec));
+
         this.#server.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
         this.#server.use("/api/v1", build(this.#database));
