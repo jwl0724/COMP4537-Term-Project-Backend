@@ -17,7 +17,7 @@ class Server {
 
     static productionCorsOption = {
         origin: (origin, callback) => {
-            if (EP.ALLOWED_ORIGINS.prod.includes(origin)) {
+            if (!origin || EP.ALLOWED_ORIGINS.prod.includes(origin)) {
                 callback(null, true);
             } else {
                 callback(new Error("Not allowed by CORS"));
@@ -55,8 +55,6 @@ class Server {
         this.#server.use(cookieParser());
 
         this.#server.use(express.json());
-
-        this.#server.get("/docs/swagger.json", (req, res) => res.json(swaggerSpec));
 
         this.#server.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
