@@ -16,16 +16,16 @@ const build = (db) => {
     const clearSession = clearResources(cs);
 
     // Auth routes
-    router.post("/login", logApi(db), (req, res, next) => as.login(req, res, next));
-    router.post("/signup", logApi(db), (req, res, next) => as.signup(req, res, next));
-    router.post("/logout", verifyToken, clearSession, logApi(db), (req, res) => as.logout(req, res));
+    router.post("/login", (req, res, next) => as.login(req, res, next));
+    router.post("/signup", (req, res, next) => as.signup(req, res, next));
+    router.post("/logout", verifyToken, clearSession, (req, res) => as.logout(req, res));
 
     // Chat
     router.post("/chat", verifyToken, logApi(db), (req, res, next) => cs.handleChat(req, res, next));
 
     // Reset
-    router.post('/forgot-password', logApi(db), (req, res, next) => rs.forgotPassword(req, res, db, next));
-    router.post('/reset', logApi(db), (req, res, next) => rs.resetPassword(req, res, next));
+    router.post('/forgot-password', (req, res, next) => rs.forgotPassword(req, res, db, next));
+    router.post('/reset', (req, res, next) => rs.resetPassword(req, res, next));
 
     // Data
     router.get("/me", verifyToken, logApi(db), (req, res, next) => dc.getMe(req, res, next));
