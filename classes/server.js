@@ -17,7 +17,7 @@ class Server {
 
     static productionCorsOption = {
         origin: (origin, callback) => {
-            if (EP.ALLOWED_ORIGINS.prod.includes(origin)) {
+            if (!origin || EP.ALLOWED_ORIGINS.prod.includes(origin)) {
                 callback(null, true);
             } else {
                 callback(new Error("Not allowed by CORS"));
