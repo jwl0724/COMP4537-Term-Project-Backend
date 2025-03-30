@@ -16,13 +16,7 @@ class Server {
     #httpServer;
 
     static productionCorsOption = {
-        origin: (origin, callback) => {
-            if (!origin || EP.ALLOWED_ORIGINS.prod.includes(origin)) {
-                callback(null, true);
-            } else {
-                callback(new Error("Not allowed by CORS"));
-            }
-        },
+        origin: "*",
         methods: ["GET", "POST", "PUT", "DELETE"],  // methods
         credentials: true, // Required for cookies
     }
