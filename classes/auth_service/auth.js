@@ -2,16 +2,15 @@ const bcrypt = require("bcryptjs");
 const { generateToken, setTokenCookie } = require("../utils/token");
 
 class AuthService {
-    #db;
 
     constructor(database) {
-        this.#db = database;
+        this.db = database;
     }
 
     login = async (req, res, next) => {
         try {
             const { email, password } = req.body;
-            const user = await this.#db.getUser(email);
+            const user = await this.db.getUser(email);
             if (!user) throw new Error("User not found");
 
             const match = await bcrypt.compare(password, user.password);
@@ -31,7 +30,7 @@ class AuthService {
             const { email, password, user_name } = req.body;
             if (!email || !password) throw new Error("Email and password are required");
 
-            const existingUser = await this.#db.getUser(email);
+            const existingUser = await this.db.getUser(email);
             if (existingUser) throw new Error("User already exists");
 
             const saltRounds = Math.floor(Math.random() * 3) + 12;
@@ -41,7 +40,7 @@ class AuthService {
             const role = "user";
             const apiCallsLeft = 20;
 
-            const created = await this.#db.writeUser(email, hashedPassword, role, apiCallsLeft, user_name);
+            const created = await this.db.writeUser(email, hashedPassword, role, apiCallsLeft, user_name);
             if (!created) throw new Error("Error creating user");
 
             const token = generateToken({ email, role });
