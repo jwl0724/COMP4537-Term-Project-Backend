@@ -17,15 +17,16 @@ class Server {
 
     static corsOptions = {
         origin: (origin, callback) => {
+            console.log("CORS check origin:", origin);
             if (!origin || EP.ALLOWED_ORIGINS.prod.includes(origin)) {
                 callback(null, true);
             } else {
-                callback(new Error('Not allowed by CORS'));
+                callback(new Error("Not allowed by CORS"));
             }
         },
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
-        credentials: true, // Only safe because origin is restricted
+        credentials: true,
     };
 
     constructor(port) {
