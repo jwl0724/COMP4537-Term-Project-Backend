@@ -6,5 +6,5 @@ Instructions:
 
 1. npm i
 2. npm run dev
-3. swagger docs located [here](http://localhost:8000/docs/)
+3. swagger docs located [here](https://term-project-metdh.ondigitalocean.app/docs/)
 4. Login first to create a token that allows you to use the rest of the API endpoints.
