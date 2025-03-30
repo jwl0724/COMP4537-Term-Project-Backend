@@ -7,45 +7,25 @@ class Repository {
         this.#db = new Database();
     }
 
-    async getUser(email) {
-        return await this.#db.readUser(email);
-    }
+    getUser = async (email) => await this.#db.readUser(email);
 
-    async writeUser(email, hashedPassword, role, apiCallsLeft, userName) {
-        return await this.#db.writeUser(email, hashedPassword, role, apiCallsLeft, userName);
-    }
+    writeUser = async (email, hashedPassword, role, apiCallsLeft, userName) => await this.#db.writeUser(email, hashedPassword, role, apiCallsLeft, userName);
 
-    async getAllUsers() {
-        return await this.#db.getAllUsers();
-    }
+    getAllUsers = async () => await this.#db.getAllUsers();
 
-    async updateApiCallsLeft(email, newCount) {
-        return await this.#db.updateApiCallsLeft(email, newCount);
-    }
+    updateApiCallsLeft = async (email, newCount) => await this.#db.updateApiCallsLeft(email, newCount);
 
-    async updateRole(email, newRole) {
-        return await this.#db.updateRole(email, newRole);
-    }
+    updateRole = async (email, newRole) => await this.#db.updateRole(email, newRole);
 
-    async getEndpointStats() {
-        return await this.#db.getEndpointStats();
-    }
+    getEndpointStats = async () => await this.#db.getEndpointStats();
 
-    async getApiStats() {
-        return await this.#db.getApiStats();
-    }
+    getApiStats = async () => await this.#db.getApiStats();
 
-    async logApiCall(method, endpoint, email) {
-        return await this.#db.logApiCall(method, endpoint, email);
-    }
+    logApiCall = async (method, endpoint, email) => await this.#db.logApiCall(method, endpoint, email);
 
-    async deleteUser(email) {
-        return await this.#db.deleteUser(email);
-    }
+    deleteUser = async (email) => await this.#db.deleteUser(email);
 
-    async updatePassword(email, hashedPassword) {
-        return await this.#db.updatePassword(email, hashedPassword);
-    }
+    updatePassword = async (email, hashedPassword) => await this.#db.updatePassword(email, hashedPassword);
 }
 
 module.exports = Repository;

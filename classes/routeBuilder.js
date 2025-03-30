@@ -1,30 +1,31 @@
 const express = require("express");
-const auth = require("./auth_service/auth");
 const clearResources = require("./utils/cleaner");
 const { logApi } = require("./utils/logApi");
 const { verifyToken } = require("./utils/token");
+const AuthService = require("./auth_service/auth");
 const ChatService = require("./chat_service/chat");
 const DataController = require("./data_service/dataController");
 const ResetService = require("./reset_service/reset");
 
 const build = (db) => {
     const router = express.Router();
+    const as = new AuthService(db);
     const dc = new DataController(db);
     const rs = new ResetService(db);
     const cs = new ChatService(db);
     const clearSession = clearResources(cs);
 
     // Auth routes
-    router.post("/login", (req, res, next) => auth.login(req, res, db, next));
-    router.post("/signup", (req, res, next) => auth.signup(req, res, db, next));
-    router.post("/logout", verifyToken, clearSession, (req, res) => auth.logout(req, res));
+    router.post("/login", (req, res, next) => as.login(req, res, next));
+    router.post("/signup", (req, res, next) => as.signup(req, res, next));
+    router.post("/logout", verifyToken, clearSession, (req, res) => as.logout(req, res));
+
+    // Chat
+    router.post("/chat", verifyToken, logApi(db), (req, res, next) => cs.handleChat(req, res, next));
 
     // Reset
     router.post('/forgot-password', (req, res, next) => rs.forgotPassword(req, res, db, next));
     router.post('/reset', (req, res, next) => rs.resetPassword(req, res, next));
-
-    // Chat
-    router.post("/chat", verifyToken, logApi(db), (req, res, next) => cs.handleChat(req, res, next));
 
     // Data
     router.get("/me", verifyToken, logApi(db), (req, res, next) => dc.getMe(req, res, next));

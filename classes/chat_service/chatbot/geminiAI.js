@@ -1,4 +1,3 @@
-require("dotenv").config();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -51,7 +50,7 @@ class GeminiAI {
         console.info("A chatbot has been initialized");
     }
 
-    async sendMessage(text) {
+    sendMessage = async (text) => {
         if (!this.#chatSession) throw new Error("Chatbot not initialized");
         return await this.#chatSession.sendMessage(text);
     }

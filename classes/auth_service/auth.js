@@ -1,64 +1,62 @@
-require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const { generateToken, setTokenCookie } = require("../utils/token");
 
-const login = async (req, res, db, next) => {
-    try {
-        const user = await db.getUser(req.body.email);
-        if (!user) throw new Error("User not found");
+class AuthService {
+    #db;
 
-        const match = await bcrypt.compare(req.body.password, user.password);
-        if (!match) throw new Error("Invalid credentials");
-
-        const token = generateToken(user);
-
-        setTokenCookie(res, token);
-
-        res.status(200).json({ message: "Login successful" });
-
-    } catch (error) {
-        next(error);
+    constructor(database) {
+        this.#db = database;
     }
-};
 
-const signup = async (req, res, db, next) => {
-    try {
-        if (!req.body.email || !req.body.password) {
-            throw new Error("Email and password are required");
+    login = async (req, res, next) => {
+        try {
+            const { email, password } = req.body;
+            const user = await this.#db.getUser(email);
+            if (!user) throw new Error("User not found");
+
+            const match = await bcrypt.compare(password, user.password);
+            if (!match) throw new Error("Invalid credentials");
+
+            const token = generateToken(user);
+            setTokenCookie(res, token);
+
+            res.status(200).json({ message: "Login successful" });
+        } catch (error) {
+            next(error);
         }
+    };
 
-        const existingUser = await db.getUser(req.body.email);
+    signup = async (req, res, next) => {
+        try {
+            const { email, password, user_name } = req.body;
+            if (!email || !password) throw new Error("Email and password are required");
 
-        if (existingUser) {
-            throw new Error("User already exists");
+            const existingUser = await this.#db.getUser(email);
+            if (existingUser) throw new Error("User already exists");
+
+            const saltRounds = Math.floor(Math.random() * 3) + 12;
+            const salt = await bcrypt.genSalt(saltRounds);
+            const hashedPassword = await bcrypt.hash(password, salt);
+
+            const role = "user";
+            const apiCallsLeft = 20;
+
+            const created = await this.#db.writeUser(email, hashedPassword, role, apiCallsLeft, user_name);
+            if (!created) throw new Error("Error creating user");
+
+            const token = generateToken({ email, role });
+            setTokenCookie(res, token);
+
+            res.status(200).json({ message: "User created successfully" });
+        } catch (error) {
+            next(error);
         }
+    };
 
-        const saltRounds = Math.floor(Math.random() * 3) + 12;
-        const salt = await bcrypt.genSalt(saltRounds);
-        const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    logout = (req, res) => {
+        res.clearCookie("token");
+        res.status(200).json({ message: "Logged out successfully" });
+    };
+}
 
-        const role = "user";
-        const apiCallsLeft = 20;
-
-        const output = await db.writeUser(req.body.email, hashedPassword, role, apiCallsLeft, req.body.user_name);
-        if (!output) {
-            throw new Error("Error creating user");
-        }
-
-        const token = generateToken({ email: req.body.email, role });
-        console.log("token is ", token);
-
-        setTokenCookie(res, token);
-
-        res.status(200).json({ message: "User created successfully" });
-    } catch (error) {
-        next(error);
-    }
-};
-
-const logout = (req, res) => {
-    res.clearCookie("token");  // Clear the JWT token cookie
-    res.status(200).json({ message: "Logged out successfully" });
-};
-
-module.exports = { login, signup, logout };
+module.exports = AuthService;

@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -66,7 +67,7 @@ class Server {
         });
     }
 
-    async start() {
+    start = async () => {
         try {
             await init();
             this.#httpServer = this.#server.listen(this.#port, () => {
@@ -78,7 +79,7 @@ class Server {
         }
     }
 
-    stop() {
+    stop = () => {
         if (this.#httpServer) {
             this.#httpServer.close(() => console.log("Server stopped"));
         }
