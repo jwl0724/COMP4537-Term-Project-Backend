@@ -152,50 +152,6 @@ class DataController {
             next(error);
         }
     }
-
-    updatePassword = async (req, res, next) => {
-        try {
-            const { currentPassword, newPassword } = req.body;
-
-            if (!currentPassword || !newPassword) {
-                const err = new Error("Both current and new passwords are required");
-                err.status = 400;
-                throw err;
-            }
-
-            const user = await this.db.getUser(req.user.email);
-            if (!user) {
-                const error = new Error("User not found");
-                error.status = 404;
-                throw error;
-            }
-
-            // Check if current password is correct
-            const isMatch = await bcrypt.compare(currentPassword, user.password);
-            if (!isMatch) {
-                const error = new Error("Current password is incorrect");
-                error.status = 400;
-                throw error;
-            }
-
-            // Hash the new password
-            const saltRounds = Math.floor(Math.random() * 3) + 12;
-            const salt = await bcrypt.genSalt(saltRounds);
-            const hashedPassword = await bcrypt.hash(newPassword, salt);
-
-            // Update password in the database
-            const updateSuccess = await this.db.updatePassword(req.user.email, hashedPassword);
-            if (!updateSuccess) {
-                const err = new Error("Failed to update password");
-                err.status = 500;
-                throw err;
-            }
-
-            res.json({ message: "Password updated successfully" });
-        } catch (error) {
-            next(error);
-        }
-    }
 }
 
 module.exports = DataController;
