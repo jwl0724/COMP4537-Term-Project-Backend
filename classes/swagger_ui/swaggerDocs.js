@@ -59,6 +59,31 @@
 
 /**
  * @swagger
+ * /api/v1/forgot-password:
+ *   post:
+ *     summary: Send reset link to user's email
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email]
+ *             properties:
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Generates a temporary reset token and sends an email with the reset link. No authentication required.
+ *       404:
+ *         description: Account with provided email does not exist
+ *       500:
+ *         description: Server error while sending the reset email
+ */
+
+/**
+ * @swagger
  * /api/v1/reset:
  *   post:
  *     summary: Reset user password using token
@@ -106,31 +131,6 @@
  *     responses:
  *       200:
  *         description: Chatbot response and audio
- */
-
-/**
- * @swagger
- * /api/v1/forgot-password:
- *   post:
- *     summary: Send reset link to user's email
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required: [email]
- *             properties:
- *               email:
- *                 type: string
- *     responses:
- *       200:
- *         description: Generates a temporary reset token and sends an email with the reset link. No authentication required.
- *       404:
- *         description: Account with provided email does not exist
- *       500:
- *         description: Server error while sending the reset email
  */
 
 /**

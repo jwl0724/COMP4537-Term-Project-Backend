@@ -1,15 +1,16 @@
 const express = require("express");
 const auth = require("./auth_service/auth");
-const reset = require("./reset_service/reset");
 const clearResources = require("./utils/cleaner");
 const { logApi } = require("./utils/logApi");
 const { verifyToken } = require("./utils/token");
 const ChatService = require("./chat_service/chat");
 const DataController = require("./data_service/dataController");
+const ResetService = require("./reset_service/reset");
 
 const build = (db) => {
     const router = express.Router();
     const dc = new DataController(db);
+    const rs = new ResetService(db);
     const cs = new ChatService(db);
     const clearSession = clearResources(cs);
 
@@ -19,8 +20,8 @@ const build = (db) => {
     router.post("/logout", verifyToken, clearSession, (req, res) => auth.logout(req, res));
 
     // Reset
-    router.post('/forgot-password', (req, res, next) => reset.forgotPassword(req, res, db, next));
-    router.post('/reset', (req, res, next) => dc.resetPassword(req, res, next));
+    router.post('/forgot-password', (req, res, next) => rs.forgotPassword(req, res, db, next));
+    router.post('/reset', (req, res, next) => rs.resetPassword(req, res, next));
 
     // Chat
     router.post("/chat", verifyToken, logApi(db), (req, res, next) => cs.handleChat(req, res, next));

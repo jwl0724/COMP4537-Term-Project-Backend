@@ -196,44 +196,6 @@ class DataController {
             next(error);
         }
     }
-
-    async resetPassword(req, res, next) {
-        try {
-            const { token, newPassword } = req.body;
-
-            if (!token || !newPassword) {
-                const err = new Error("Token and new password are required");
-                err.status = 400;
-                throw err;
-            }
-
-            // Decode the token
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-            const userEmail = decoded.email;
-            const user = await this.db.getUser(userEmail);
-            if (!user) {
-                const err = new Error("User not found");
-                err.status = 404;
-                throw err;
-            }
-
-            // Hash the new password
-            const hashedPassword = await bcrypt.hash(newPassword, 12);
-
-            // Update password in the database
-            const updateSuccess = await this.db.updatePassword(userEmail, hashedPassword);
-            if (!updateSuccess) {
-                const err = new Error("Failed to reset password");
-                err.status = 500;
-                throw err;
-            }
-
-            res.json({ message: "Password reset successfully" });
-        } catch (error) {
-            next(error);
-        }
-    }
 }
 
 module.exports = DataController;
