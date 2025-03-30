@@ -64,7 +64,8 @@ class ResetService {
     };
 
     async sendEmail(email, token) {
-        const resetLink = `https://comp-4537-term-project-frontend-three.vercel.app/reset-password?token=${token}`;
+        const frontend = "https://comp-4537-term-project-frontend-three.vercel.app";
+        const resetLink = `${frontend}/reset-password?token=${token}`;
 
         const transporter = nodemailer.createTransport({
             service: "gmail",
