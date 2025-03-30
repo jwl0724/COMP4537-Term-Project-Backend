@@ -42,6 +42,10 @@ class Repository {
     async deleteUser(email) {
         return await this.#db.deleteUser(email);
     }
+
+    async updatePassword(email, hashedPassword) {
+        return await this.#db.updatePassword(email, hashedPassword);
+    }
 }
 
 module.exports = Repository;

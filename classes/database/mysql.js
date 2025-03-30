@@ -85,6 +85,15 @@ class MySQL {
         );
         return rows;
     }
+
+    async updatePassword(email, hashedPassword) {
+        const [rows] = await this.#pool.execute(
+            "UPDATE users SET password = ? WHERE email = ?",
+            [hashedPassword, email]
+        );
+        return rows.affectedRows > 0;
+    }
+
 }
 
 module.exports = MySQL;
