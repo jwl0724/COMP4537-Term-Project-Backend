@@ -24,8 +24,8 @@ const build = (db) => {
     router.post("/chat", verifyToken, logApi(db), (req, res, next) => cs.handleChat(req, res, next));
 
     // Reset
-    router.post('/forgot-password', (req, res, next) => rs.forgotPassword(req, res, db, next));
-    router.post('/reset', (req, res, next) => rs.resetPassword(req, res, next));
+    router.post('/forgot-password', rs.forgotPassword);
+    router.post('/reset', rs.resetPassword);
 
     // Data
     router.get("/me", verifyToken, logApi(db), (req, res, next) => dc.getMe(req, res, next));
