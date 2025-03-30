@@ -23,7 +23,7 @@ class Server {
                 callback(new Error("Not allowed by CORS"));
             }
         },
-        methods: ["GET", "POST", "PUT", "DELETE"],  // methods
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // methods
         credentials: true, // Required for cookies
         allowedHeaders: ["Content-Type", "Authorization"]
     }
@@ -36,7 +36,7 @@ class Server {
                 callback(new Error("Not allowed by CORS"), false);
             }
         },
-        methods: ["GET", "POST", "PUT", "DELETE"],  // methods
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],  // methods
         credentials: true,
         allowedHeaders: ["Content-Type", "Authorization"]
     }
