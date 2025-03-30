@@ -135,37 +135,6 @@
 
 /**
  * @swagger
- * /api/v1/update-password:
- *   put:
- *     summary: Update password for logged-in user
- *     tags: [Auth]
- *     security:
- *       - cookieAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required: [currentPassword, newPassword]
- *             properties:
- *               currentPassword:
- *                 type: string
- *               newPassword:
- *                 type: string
- *     responses:
- *       200:
- *         description: Password updated successfully
- *       400:
- *         description: Invalid current password or input
- *       403:
- *         description: Unauthorized access
- *       500:
- *         description: Server error while updating password
- */
-
-/**
- * @swagger
  * /api/v1/me:
  *   get:
  *     summary: Get current user details
