@@ -93,7 +93,6 @@ class MySQL {
         );
         return rows.affectedRows > 0;
     }
-
 }
 
 module.exports = MySQL;
