@@ -20,7 +20,6 @@
     "mysql2": "^3.13.0",
     "node-fetch": "^3.3.2",
     "nodemailer": "^6.10.0",
-    "run": "^1.5.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^11.1.0"
