@@ -25,8 +25,9 @@ class Server {
             }
         },
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
+        allowedHeaders: ['auth-token', 'Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
         credentials: true,
+        preflightContinue: true,
     };
 
     constructor(port) {
