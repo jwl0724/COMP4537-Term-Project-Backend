@@ -57,6 +57,7 @@ class FakeYouTTS {
         return await this.pollForResult(jobToken, headers);
     }
 
+    // submit job request and returns job token
     submitTTSRequest = async (text, headers) => {
         const res = await fetch("https://api.fakeyou.com/tts/inference", {
             method: "POST",
@@ -74,14 +75,18 @@ class FakeYouTTS {
         return data.inference_job_token;
     }
 
+    // use job token to get status of tts result
     pollForResult = async (jobToken, headers) => {
+        // 30 loops to check result
         for (let i = 0; i < 30; i++) {
             const result = await fetch(`https://api.fakeyou.com/tts/job/${jobToken}`, { headers });
             const statusData = await result.json();
 
+            // extracts job status and check if tts job successful
             if (statusData.success) {
                 const { status, maybe_public_bucket_wav_audio_path: audioPath } = statusData.state;
 
+                // returns audio link when successful
                 if (status === "complete_success") {
                     return `${BASE_CDN_URL}${audioPath}`;
                 }
@@ -90,10 +95,8 @@ class FakeYouTTS {
                     throw new Error(`TTS job failed: ${status}`);
                 }
             }
-
             await new Promise(resolve => setTimeout(resolve, 1000));
         }
-
         throw new Error("TTS job timed out");
     }
 }

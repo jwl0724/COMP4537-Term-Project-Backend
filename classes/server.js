@@ -52,7 +52,6 @@ class Server {
 
         // Middlewares
         const corsOptions = process.env.MODE === "production" ? Server.productionCorsOption : Server.developmentCorsOption;
-
         this.#server.use(cors(corsOptions));
         this.#server.options("*", cors(corsOptions));
 
@@ -64,7 +63,7 @@ class Server {
 
         this.#server.use("/api/v1", build(this.#database));
 
-        this.#server.use((err, req, res, next) => { // IMPORTANT: THIS NEEDS TO BE LAST OF THE MIDDLEWARES
+        this.#server.use((err, req, res, next) => { // Catches errors thrown via next
             console.error("Error:", err.message);
             const statusCode = err.status || 500;
             res.status(statusCode).json({ error: err.message });

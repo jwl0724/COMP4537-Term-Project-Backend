@@ -4,7 +4,7 @@ const cb = require("./chatbot/geminiAI");
 const fyTTS = require("./tts_service/fakeYouTTS");
 
 class ChatService {
-    #sessions = new Map();
+    #sessions = new Map(); // separate chat sessions per user
 
     constructor(database) {
         this.db = database;
@@ -12,12 +12,12 @@ class ChatService {
 
     getSession = (email) => {
         if (!this.#sessions.has(email)) {
-            this.#sessions.set(email, new cb());
+            this.#sessions.set(email, new cb()); // set session with user email and chatbot instance
         }
-        return this.#sessions.get(email);
+        return this.#sessions.get(email); // gets session with user email
     }
 
-    clearSession = (email) => this.#sessions.delete(email);
+    clearSession = (email) => this.#sessions.delete(email); // clears session with user email
 
     handleChat = async (req, res, next) => {
         try {
@@ -25,22 +25,22 @@ class ChatService {
             const user = await this.db.getUser(userEmail);
             if (!user) throw new Error("User not found");
 
-            const isAtLimit = user.api_calls_left === 0;
+            const isAtLimit = user.api_calls_left === 0; // triggers alert status when api calls 0
             const userMessage = req.body.message;
             if (!userMessage) throw new Error("No message provided in the request body.");
 
-            const chatbot = this.getSession(userEmail);
+            const chatbot = this.getSession(userEmail); // get chat session from user email
             const result = await chatbot.sendMessage(userMessage);
             const chatbotText = result.response.text();
 
-            // Extract emotion from the response
+            // match[0] is whole string, match[1] is emotion, and match[2] is string after colon
             const match = chatbotText.match(/^(happy|sad|angry|disgust|scared|shocked|mock|neutral):\s*(.*)/i);
             const emotion = match ? match[1].toLowerCase() : "neutral";
             const finalText = match ? match[2] : chatbotText;
-            console.log(`${emotion}: ${finalText}`);
 
             const audioUrl = await fyTTS.generateAudioFromText(finalText);
 
+            // decrement api calls every chatbot request
             if (user.api_calls_left !== -1) {
                 await this.db.updateApiCallsLeft(userEmail, user.api_calls_left - 1);
             }

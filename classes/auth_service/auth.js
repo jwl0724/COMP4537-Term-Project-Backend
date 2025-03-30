@@ -15,7 +15,7 @@ class AuthService {
             const user = await this.db.getUser(email);
             if (!user) throw new Error("User not found");
 
-            const match = await bcrypt.compare(password, user.password);
+            const match = await bcrypt.compare(password, user.password); // compares this password to hashed password
             if (!match) throw new Error("Invalid credentials");
 
             const token = generateToken(user);

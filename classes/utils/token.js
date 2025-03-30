@@ -17,29 +17,29 @@ const devCookieOptions = {
 };
 
 const verifyToken = (req, res, next) => {
-    const token = req.cookies.token;  // Get token from cookies
-
-    if (!token) {
-        const error = new Error("Access denied, no token provided");
-        error.status = 403;
-        return next(error);
-    }
-
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify token
-        req.user = decoded;  // Attach user data to the request object
+        const token = req.cookies.token; // Token from cookies
+
+        if (!token) {
+            const error = new Error("Access denied, no token provided");
+            error.status = 403;
+            throw error;
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded; // Attach user data to the request object
         next();  // Proceed to the next middleware or route handler
     } catch (error) {
-        error.status = 400;
+        error.status = error.status || 400;
         return next(error);
     }
-}
+};
 
 const generateToken = (user) => {
     try {
         const token = jwt.sign(
-            { email: user.email, role: user.role },
-            process.env.JWT_SECRET,
+            { email: user.email, role: user.role }, // signs with email and role
+            process.env.JWT_SECRET, // signs with secret
             { expiresIn: "1h" } // Token expiration time (1 hour)
         );
         return token;

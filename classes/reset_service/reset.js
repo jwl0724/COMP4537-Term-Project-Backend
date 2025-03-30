@@ -5,7 +5,7 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcryptjs");
 
 class ResetService {
-    #tokenStorage = new Map();
+    #tokenStorage = new Map(); // storage for tokens
 
     constructor(db) {
         this.db = db;
@@ -42,6 +42,7 @@ class ResetService {
             const { token, newPassword } = req.body;
             if (!token || !newPassword) throw new Error("Token and new password are required");
 
+            // checks if token is expired or exists
             const stored = this.#tokenStorage.get(token);
             if (!stored || stored.expiresAt < Date.now()) {
                 throw new Error("Invalid or expired token");
@@ -68,6 +69,7 @@ class ResetService {
         const frontend = "https://comp-4537-term-project-frontend-three.vercel.app";
         const resetLink = `${frontend}/reset-password?token=${token}`;
 
+        // email that sends users the link
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
@@ -76,6 +78,7 @@ class ResetService {
             },
         });
 
+        // email contents
         await transporter.sendMail({
             from: process.env.EMAIL_USER,
             to: email,
