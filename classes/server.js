@@ -15,23 +15,18 @@ class Server {
     #database;
     #httpServer;
 
-    static productionCorsOption = {
-        origin: "*",
-        methods: ["GET", "POST", "PUT", "DELETE"],  // methods
-        credentials: true, // Required for cookies
-    }
-
-    static developmentCorsOption = {
+    static corsOptions = {
         origin: (origin, callback) => {
-            if (!origin || /^(http:\/\/localhost(:\d+)?|http:\/\/127\.0\.0\.1(:\d+)?)$/.test(origin)) {
+            if (!origin || EP.ALLOWED_ORIGINS.includes(origin)) {
                 callback(null, true);
             } else {
-                callback(new Error("Not allowed by CORS"), false);
+                callback(new Error('Not allowed by CORS'));
             }
         },
-        methods: ["GET", "POST", "PUT", "DELETE"],  // methods
-        credentials: true,
-    }
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true, // Only safe because origin is restricted
+    };
 
     constructor(port) {
         this.#port = port;
@@ -41,8 +36,8 @@ class Server {
         this.#database = new Repository();
 
         // Middlewares
-        if (process.env.MODE === "production") this.#server.use(cors(Server.productionCorsOption));
-        else this.#server.use(cors(Server.developmentCorsOption));
+        this.#server.use(cors(Server.corsOptions));
+        this.#server.options('*', cors(Server.corsOptions));
 
         this.#server.use(cookieParser());
 
