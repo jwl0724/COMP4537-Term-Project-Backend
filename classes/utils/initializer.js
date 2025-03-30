@@ -1,7 +1,7 @@
 const fakeYouTTS = require("../chat_service/tts_service/fakeYouTTS");
 
-async function init() {
+const init = async () => {
     await fakeYouTTS.init();
-}
+};
 
 module.exports = { init };

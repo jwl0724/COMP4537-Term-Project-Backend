@@ -13,7 +13,7 @@ class MySQL {
         }).promise();
     }
 
-    async readUser(email) {
+    readUser = async (email) => {
         const [rows] = await this.#pool.execute(
             "SELECT * FROM users WHERE email = ?",
             [email]
@@ -21,7 +21,7 @@ class MySQL {
         return rows.length ? rows[0] : null;
     }
 
-    async writeUser(email, hashedPassword, role, apiCallsLeft, userName) {
+    writeUser = async (email, hashedPassword, role, apiCallsLeft, userName) => {
         const [rows] = await this.#pool.execute(
             "INSERT INTO users (email, password, role, api_calls_left, user_name) VALUES (?, ?, ?, ?, ?)",
             [email, hashedPassword, role, apiCallsLeft, userName]
@@ -29,12 +29,12 @@ class MySQL {
         return rows;
     }
 
-    async getAllUsers() {
+    getAllUsers = async () => {
         const [rows] = await this.#pool.execute("SELECT * FROM users");
         return rows;
     }
 
-    async updateApiCallsLeft(email, newCount) {
+    updateApiCallsLeft = async (email, newCount) => {
         const [rows] = await this.#pool.execute(
             "UPDATE users SET api_calls_left = ? WHERE email = ?",
             [newCount, email]
@@ -42,7 +42,7 @@ class MySQL {
         return rows;
     }
 
-    async updateRole(email, newRole) {
+    updateRole = async (email, newRole) => {
         const [rows] = await this.#pool.execute(
             "UPDATE users SET role = ? WHERE email = ?",
             [newRole, email]
@@ -50,7 +50,7 @@ class MySQL {
         return rows;
     }
 
-    async getEndpointStats() {
+    getEndpointStats = async () => {
         const [rows] = await this.#pool.execute(`
             SELECT method, endpoint, COUNT(*) AS requests
             FROM api_calls
@@ -60,7 +60,7 @@ class MySQL {
         return rows;
     }
 
-    async getApiStats() {
+    getApiStats = async () => {
         const [rows] = await this.#pool.execute(`
             SELECT email, method, COUNT(*) AS requests
             FROM api_calls
@@ -70,14 +70,14 @@ class MySQL {
         return rows;
     }
 
-    async logApiCall(method, endpoint, email) {
+    logApiCall = async (method, endpoint, email) => {
         await this.#pool.execute(
             "INSERT INTO api_calls (email, method, endpoint) VALUES (?, ?, ?)",
             [email, method, endpoint]
         );
     }
 
-    async deleteUser(email) {
+    deleteUser = async (email) => {
         const [rows] = await this.#pool.execute(
             "DELETE FROM users WHERE email = ?",
             [email]
@@ -85,7 +85,7 @@ class MySQL {
         return rows;
     }
 
-    async updatePassword(email, hashedPassword) {
+    updatePassword = async (email, hashedPassword) => {
         const [rows] = await this.#pool.execute(
             "UPDATE users SET password = ? WHERE email = ?",
             [hashedPassword, email]

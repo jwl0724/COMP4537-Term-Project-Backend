@@ -67,7 +67,7 @@ class Server {
         });
     }
 
-    async start() {
+    start = async () => {
         try {
             await init();
             this.#httpServer = this.#server.listen(this.#port, () => {
@@ -79,7 +79,7 @@ class Server {
         }
     }
 
-    stop() {
+    stop = () => {
         if (this.#httpServer) {
             this.#httpServer.close(() => console.log("Server stopped"));
         }

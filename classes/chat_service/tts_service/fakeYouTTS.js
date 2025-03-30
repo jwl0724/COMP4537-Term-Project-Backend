@@ -4,7 +4,7 @@ const { SPONGEBOB_MODEL, BASE_CDN_URL } = require("../../../constants/endpoints"
 class FakeYouTTS {
     #authCookie = null;
 
-    async init() {
+    init = async () => {
         if (this.#authCookie && await this.isLoggedIn()) return;
 
         const res = await fetch("https://api.fakeyou.com/login", {
@@ -29,7 +29,7 @@ class FakeYouTTS {
         console.log("Logged in to FakeYou");
     }
 
-    async isLoggedIn() {
+    isLoggedIn = async () => {
         if (!this.#authCookie) return false;
 
         const res = await fetch("https://api.fakeyou.com/session", {
@@ -41,7 +41,7 @@ class FakeYouTTS {
         return res.ok && data.logged_in === true;
     }
 
-    async generateAudioFromText(text) {
+    generateAudioFromText = async (text) => {
         if (!text) throw new Error("Missing text");
         if (!await this.isLoggedIn()) await this.init();
 
@@ -55,7 +55,7 @@ class FakeYouTTS {
         return await this.pollForResult(jobToken, headers);
     }
 
-    async submitTTSRequest(text, headers) {
+    submitTTSRequest = async (text, headers) => {
         const res = await fetch("https://api.fakeyou.com/tts/inference", {
             method: "POST",
             headers,
@@ -72,7 +72,7 @@ class FakeYouTTS {
         return data.inference_job_token;
     }
 
-    async pollForResult(jobToken, headers) {
+    pollForResult = async (jobToken, headers) => {
         for (let i = 0; i < 30; i++) {
             const result = await fetch(`https://api.fakeyou.com/tts/job/${jobToken}`, { headers });
             const statusData = await result.json();

@@ -6,7 +6,7 @@ class DataController {
         this.db = database;
     }
 
-    async getAllUserData(req, res, next) {
+    getAllUserData = async (req, res, next) => {
         try {
             const users = await this.db.getAllUsers();
 
@@ -28,7 +28,7 @@ class DataController {
         }
     }
 
-    async getMe(req, res, next) {
+    getMe = async (req, res, next) => {
         try {
             const userEmail = req.user.email;
             const user = await this.db.getUser(userEmail);
@@ -50,7 +50,7 @@ class DataController {
         }
     }
 
-    async updateApiCallsLeft(req, res, next) {
+    updateApiCallsLeft = async (req, res, next) => {
         try {
             if (req.user.role !== "admin") {
                 const err = new Error("Forbidden: Admins only");
@@ -73,7 +73,7 @@ class DataController {
         }
     }
 
-    async updateRole(req, res, next) {
+    updateRole = async (req, res, next) => {
         try {
             if (req.user.role !== "admin") {
                 const err = new Error("Forbidden: Admins only");
@@ -105,7 +105,7 @@ class DataController {
         }
     }
 
-    async getEndpointStats(req, res, next) {
+    getEndpointStats = async (req, res, next) => {
         try {
             const stats = await this.db.getEndpointStats();
             res.json(stats);
@@ -114,7 +114,7 @@ class DataController {
         }
     }
 
-    async getApiStats(req, res, next) {
+    getApiStats = async (req, res, next) => {
         try {
             const stats = await this.db.getApiStats();
             res.json(stats);
@@ -123,7 +123,7 @@ class DataController {
         }
     }
 
-    async deleteUser(req, res, next) {
+    deleteUser = async (req, res, next) => {
         try {
             if (req.user.role !== "admin") {
                 const err = new Error("Forbidden: Admins only");
@@ -153,7 +153,7 @@ class DataController {
         }
     }
 
-    async updatePassword(req, res, next) {
+    updatePassword = async (req, res, next) => {
         try {
             const { currentPassword, newPassword } = req.body;
 

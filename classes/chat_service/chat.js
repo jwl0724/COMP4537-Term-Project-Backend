@@ -8,18 +8,16 @@ class ChatService {
         this.db = database;
     }
 
-    getSession(email) {
+    getSession = (email) => {
         if (!this.#sessions.has(email)) {
             this.#sessions.set(email, new cb());
         }
         return this.#sessions.get(email);
     }
 
-    clearSession(email) {
-        return this.#sessions.delete(email);
-    }
+    clearSession = (email) => this.#sessions.delete(email);
 
-    async handleChat(req, res, next) {
+    handleChat = async (req, res, next) => {
         try {
             const userEmail = req.user.email;
             const user = await this.db.getUser(userEmail);
