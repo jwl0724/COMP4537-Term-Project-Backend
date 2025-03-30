@@ -25,7 +25,6 @@ class Server {
         },
         methods: ["GET", "POST", "PUT", "DELETE"],  // methods
         credentials: true, // Required for cookies
-        allowedHeaders: ["Content-Type", "Authorization"]
     }
 
     static developmentCorsOption = {
@@ -38,7 +37,6 @@ class Server {
         },
         methods: ["GET", "POST", "PUT", "DELETE"],  // methods
         credentials: true,
-        allowedHeaders: ["Content-Type", "Authorization"]
     }
 
     constructor(port) {
