@@ -27,6 +27,9 @@ const build = (db) => {
         dc.resetPassword(req, res, next); // Call the resetPassword method in DataController
     });
 
+    router.put('/update-password', verifyToken, logApi(db), (req, res, next) => {
+        dc.updatePassword(req, res, next);
+      });
 
 
     // Chat

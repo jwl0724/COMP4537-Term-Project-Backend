@@ -151,46 +151,129 @@ class DataController {
         }
     }
 
-    async resetPassword(req, res, next) {
+    async updatePassword(req, res, next) {
         try {
-            const { email, newPassword } = req.body;
-
-            // Step 1: Validate input
-            if (!email || !newPassword) {
-                const err = new Error("Email and new password are required");
-                err.status = 400;
-                throw err;
-            }
-
-            // Step 2: Check if user exists
-            const user = await this.db.getUser(email); // Use the Repository's getUser method
-            if (!user) {
-                const err = new Error("User not found");
-                err.status = 404;
-                throw err;
-            }
-
-            // Step 3: Hash the new password
-            const hashedPassword = await bcrypt.hash(newPassword, 12); // Use bcrypt to hash
-
-            // Step 4: Update the password in the database
-            const updateSuccess = await this.db.updateUserPassword(email, hashedPassword); // Call updateUserPassword
-            if (!updateSuccess) {
-                const err = new Error("Failed to update password");
-                err.status = 500;
-                throw err;
-            }
-
-            // Step 5: Respond with success
-            res.json({ message: "Password successfully reset" });
+          const { currentPassword, newPassword } = req.body;
+    
+          if (!currentPassword || !newPassword) {
+            const err = new Error("Both current and new passwords are required");
+            err.status = 400;
+            throw err;
+          }
+    
+          const user = await this.db.getUser(req.user.email);
+          if (!user) {
+            const error = new Error("User not found");
+            error.status = 404;
+            throw error;
+          }
+    
+          // Check if current password is correct
+          const isMatch = await bcrypt.compare(currentPassword, user.password);
+          if (!isMatch) {
+            const error = new Error("Current password is incorrect");
+            error.status = 400;
+            throw error;
+          }
+    
+          // Hash the new password
+          const hashedPassword = await bcrypt.hash(newPassword, 12);
+    
+          // Update password in the database
+          const updateSuccess = await this.db.updateUserPassword(req.user.email, hashedPassword);
+          if (!updateSuccess) {
+            const err = new Error("Failed to update password");
+            err.status = 500;
+            throw err;
+          }
+    
+          res.json({ message: "Password updated successfully" });
         } catch (error) {
-            next(error);
+          next(error);
         }
-    }
+      }
+
+      async resetPassword(req, res, next) {
+        try {
+          const { token, newPassword } = req.body;
+    
+          if (!token || !newPassword) {
+            const err = new Error("Token and new password are required");
+            err.status = 400;
+            throw err;
+          }
+    
+          // Decode the token
+          const decoded = jwt.verify(token, JWT_SECRET);
+    
+          const userEmail = decoded.email;
+          const user = await this.db.getUser(userEmail);
+          if (!user) {
+            const err = new Error("User not found");
+            err.status = 404;
+            throw err;
+          }
+    
+          // Hash the new password
+          const hashedPassword = await bcrypt.hash(newPassword, 12);
+    
+          // Update password in the database
+          const updateSuccess = await this.db.updateUserPassword(userEmail, hashedPassword);
+          if (!updateSuccess) {
+            const err = new Error("Failed to reset password");
+            err.status = 500;
+            throw err;
+          }
+    
+          res.json({ message: "Password reset successfully" });
+        } catch (error) {
+          next(error);
+        }
+      }
+    
+
+    // async resetPassword(req, res, next) {
+    //     try {
+    //         const { email, newPassword } = req.body;
+
+    //         // Step 1: Validate input
+    //         if (!email || !newPassword) {
+    //             const err = new Error("Email and new password are required");
+    //             err.status = 400;
+    //             throw err;
+    //         }
+
+    //         // Step 2: Check if user exists
+    //         const user = await this.db.getUser(email); // Use the Repository's getUser method
+    //         if (!user) {
+    //             const err = new Error("User not found");
+    //             err.status = 404;
+    //             throw err;
+    //         }
+
+    //         // Step 3: Hash the new password
+    //         const hashedPassword = await bcrypt.hash(newPassword, 12); // Use bcrypt to hash
+
+    //         // Step 4: Update the password in the database
+    //         const updateSuccess = await this.db.updateUserPassword(email, hashedPassword); // Call updateUserPassword
+    //         if (!updateSuccess) {
+    //             const err = new Error("Failed to update password");
+    //             err.status = 500;
+    //             throw err;
+    //         }
+
+    //         // Step 5: Respond with success
+    //         res.json({ message: "Password successfully reset" });
+    //     } catch (error) {
+    //         next(error);
+    //     }
+    // }
 
     async forgotPassword(req, res, next) {
         try {
-            const { email } = req.body;
+            const email  = req.body.email;
+            console.log("email ", email)
+            console.log("req.body.email", req.body.email)
             
             if (!email) {
                 const error = new Error("Email is required");
@@ -243,7 +326,7 @@ class DataController {
     generateResetToken(email) {
         // Generate a token using JWT, random string, or another secure method
         const jwt = require('jsonwebtoken');
-        const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' }); // Example 1-hour expiration
+        const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '5m' }); // Example 5 minute expiration
         return token;
     }
 }
