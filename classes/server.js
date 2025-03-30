@@ -49,8 +49,10 @@ class Server {
         this.#database = new Repository();
 
         // Middlewares
-        if (process.env.MODE === "production") this.#server.use(cors(Server.productionCorsOption));
-        else this.#server.use(cors(Server.developmentCorsOption));
+        const corsOptions = process.env.MODE === "production" ? Server.productionCorsOption : Server.developmentCorsOption;
+
+        this.#server.use(cors(corsOptions));
+        this.#server.options("*", cors(corsOptions));
 
         this.#server.use(cookieParser());
 
