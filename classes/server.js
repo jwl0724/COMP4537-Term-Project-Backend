@@ -17,7 +17,7 @@ class Server {
 
     static productionCorsOption = {
         origin: (origin, callback) => {
-            if (!origin || EP.ALLOWED_ORIGINS.prod.includes(origin)) {
+            if (EP.ALLOWED_ORIGINS.prod.includes(origin)) {
                 callback(null, true);
             } else {
                 callback(new Error("Not allowed by CORS"));
@@ -56,9 +56,7 @@ class Server {
 
         this.#server.use(express.json());
 
-        this.#server.get("/docs/swagger.json", (req, res) => res.json(swaggerSpec));
-
-        this.#server.use("/docs", swaggerUi.serve, swaggerUi.setup(null, { swaggerUrl: "/docs/swagger.json", }));
+        this.#server.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
         this.#server.use("/api/v1", build(this.#database));
 
@@ -69,7 +67,7 @@ class Server {
         });
     }
 
-    start = async () => {
+    async start() {
         try {
             await init();
             this.#httpServer = this.#server.listen(this.#port, () => {
@@ -81,7 +79,7 @@ class Server {
         }
     }
 
-    stop = () => {
+    stop() {
         if (this.#httpServer) {
             this.#httpServer.close(() => console.log("Server stopped"));
         }
