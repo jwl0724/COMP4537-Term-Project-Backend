@@ -20,7 +20,7 @@ const build = (db) => {
     router.post("/logout", verifyToken, clearSession, (req, res) => auth.logout(req, res));
 
     router.post('/forgot-password', async (req, res, next) => {
-        await forgotPassword(req, res, db, next);
+        await dc.forgotPassword(req, res, next);
     });
 
     router.post('/reset', verifyToken, logApi(db), async (req, res, next) => {
