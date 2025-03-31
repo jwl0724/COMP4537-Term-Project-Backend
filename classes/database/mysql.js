@@ -64,11 +64,11 @@ class MySQL {
 
     getApiStats = async () => {
         const [rows] = await this.#pool.execute(`
-        SELECT u.user_name, a.email, COUNT(*) AS requests
-        FROM api_calls a
-        JOIN users u ON u.email = a.email
-        GROUP BY a.email
-        ORDER BY requests DESC
+            SELECT u.user_name, a.email, COUNT(*) AS requests
+            FROM api_calls a
+            JOIN users u ON u.email = a.email
+            GROUP BY a.email
+            ORDER BY requests DESC
     `);
         return rows;
     };
