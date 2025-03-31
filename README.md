@@ -16,12 +16,12 @@ Authentication is handled using hashed passwords with bcryptjs, JWTs for token g
 
 Forgot password and reset password flow is handled using nodemailer. Reset tokens are stored locally in memory and expire/deleted after 5 minutes.
 
-Swagger UI is used to document the API endpoints. It is located [here](https://term-project-metdh.ondigitalocean.app/docs/)
+Swagger UI is used to document the API endpoints. It is located [here](https://term-project-metdh.ondigitalocean.app/docs/).
 
 # Dev Instructions:
 
 1. npm i
 2. npm run dev
-3. Login/Signup first to create a token, allows you to use the rest of the API endpoints.
+3. Login/Signup first to create a token, allows you to use the rest of the API endpoints. /forgot-password and /reset do not require a token to use.
 
 This project was assisted by ChatGPT, OpenAI.
