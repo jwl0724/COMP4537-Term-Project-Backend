@@ -7,7 +7,7 @@ const prodCookieOptions = {
     secure: true,     // Cookies sent only over https
     sameSite: "None", // Cross-site cookies are allowed
     maxAge: 1000 * 60 * 60  // 1 hour expiration
-}
+};
 
 const devCookieOptions = {
     httpOnly: true, // Prevents JS access to the cookie
@@ -29,36 +29,33 @@ const verifyToken = (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded; // Attach user data to the request object
         next();  // Proceed to the next middleware or route handler
-    } catch (error) {
-        error.status = error.status || 400;
-        return next(error);
+    } catch (err) {
+        err.status = 401;
+        next(err);
     }
 };
 
 const generateToken = (user) => {
     try {
-        const token = jwt.sign(
+        return jwt.sign(
             { email: user.email, role: user.role }, // signs with email and role
             process.env.JWT_SECRET, // signs with secret
             { expiresIn: "1h" } // Token expiration time (1 hour)
         );
-        return token;
-    } catch (error) {
-        const err = new Error("Error generating token: " + error.message);
+    } catch (err) {
         err.status = 500;
-        throw err;  // Throw the error to be caught by next()
+        throw err;
     }
-}
+};
 
 const setTokenCookie = (res, token) => {
     try {
         const cookieOption = process.env.MODE === "production" ? prodCookieOptions : devCookieOptions;
         res.cookie("token", token, cookieOption);
-    } catch (error) {
-        const err = new Error("Error setting token cookie: " + error.message);
+    } catch (err) {
         err.status = 500;
         throw err;
     }
-}
+};
 
 module.exports = { verifyToken, generateToken, setTokenCookie };
