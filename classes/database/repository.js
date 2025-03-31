@@ -1,5 +1,6 @@
-const Database = require("./mysql");
+const Database = require("./mysql"); // replace with any database
 
+// Acts as Facade over the database layer, which delegates all data operations to the Database class.
 class Repository {
     #db;
 
