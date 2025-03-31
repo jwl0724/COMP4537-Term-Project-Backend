@@ -3,6 +3,8 @@
 const bcrypt = require("bcryptjs");
 const { generateToken, setTokenCookie } = require("../utils/token");
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 class AuthService {
 
     constructor(database) {
@@ -12,6 +14,10 @@ class AuthService {
     login = async (req, res, next) => {
         try {
             const { email, password } = req.body;
+
+            if (!email || !password) throw new Error("Email and password are required");
+            if (!emailRegex.test(email)) throw new Error("Invalid email format");
+
             const user = await this.db.getUser(email);
             if (!user) throw new Error("User not found");
 
@@ -30,7 +36,9 @@ class AuthService {
     signup = async (req, res, next) => {
         try {
             const { email, password, user_name } = req.body;
+
             if (!email || !password) throw new Error("Email and password are required");
+            if (!emailRegex.test(email)) throw new Error("Invalid email format");
 
             const existingUser = await this.db.getUser(email);
             if (existingUser) throw new Error("User already exists");
