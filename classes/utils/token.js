@@ -43,7 +43,6 @@ const generateToken = (user) => {
             { expiresIn: "1h" } // Token expiration time (1 hour)
         );
     } catch (err) {
-        err.status = 500;
         throw err;
     }
 };
@@ -53,7 +52,6 @@ const setTokenCookie = (res, token) => {
         const cookieOption = process.env.MODE === "production" ? prodCookieOptions : devCookieOptions;
         res.cookie("token", token, cookieOption);
     } catch (err) {
-        err.status = 500;
         throw err;
     }
 };
