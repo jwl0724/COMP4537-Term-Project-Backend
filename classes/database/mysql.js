@@ -69,7 +69,7 @@ class MySQL {
             JOIN users u ON u.email = a.email
             GROUP BY a.email
             ORDER BY requests DESC
-    `);
+        `);
         return rows;
     };
 
