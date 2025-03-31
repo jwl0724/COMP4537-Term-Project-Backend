@@ -64,7 +64,7 @@
  * /api/v1/forgot-password:
  *   post:
  *     summary: Send reset link to user's email
- *     tags: [Auth]
+ *     tags: [Reset]
  *     requestBody:
  *       required: true
  *       content:
@@ -89,7 +89,7 @@
  * /api/v1/reset:
  *   post:
  *     summary: Reset user password using token
- *     tags: [Auth]
+ *     tags: [Reset]
  *     requestBody:
  *       required: true
  *       content:
@@ -153,7 +153,7 @@
  * /api/v1/get-all-users:
  *   get:
  *     summary: Get list of all users
- *     tags: [Users]
+ *     tags: [Admin]
  *     security:
  *       - cookieAuth: []
  *     responses:
@@ -166,7 +166,7 @@
  * /api/v1/api-stats:
  *   get:
  *     summary: Get per-user API usage statistics
- *     tags: [Stats]
+ *     tags: [Admin]
  *     security:
  *       - cookieAuth: []
  *     responses:
@@ -179,7 +179,7 @@
  * /api/v1/endpoint-stats:
  *   get:
  *     summary: Get endpoint usage statistics
- *     tags: [Stats]
+ *     tags: [Admin]
  *     security:
  *       - cookieAuth: []
  *     responses:
@@ -216,7 +216,7 @@
  * @swagger
  * /api/v1/update-role:
  *   put:
- *     summary: Update user role (admin-only)
+ *     summary: Update user role
  *     tags: [Admin]
  *     security:
  *       - cookieAuth: []
@@ -242,7 +242,7 @@
  * @swagger
  * /api/v1/delete-user:
  *   delete:
- *     summary: Delete a user (admin-only)
+ *     summary: Delete a user
  *     tags: [Admin]
  *     security:
  *       - cookieAuth: []
