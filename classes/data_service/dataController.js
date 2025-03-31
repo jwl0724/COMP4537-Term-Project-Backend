@@ -66,7 +66,14 @@ class DataController {
                 throw err;
             }
 
-            await this.db.updateApiCallsLeft(email, api_calls_left);
+            const result = await this.db.updateApiCallsLeft(email, api_calls_left);
+
+            if (result.affectedRows === 0) {
+                const err = new Error("User not found");
+                err.status = 404;
+                throw err;
+            }
+
             res.json({ message: "API calls updated successfully" });
         } catch (error) {
             next(error);
@@ -90,6 +97,7 @@ class DataController {
             }
 
             const result = await this.db.updateRole(email, role);
+
             if (result.affectedRows === 0) {
                 const err = new Error("User not found");
                 err.status = 404;
@@ -97,6 +105,7 @@ class DataController {
             }
 
             const apiCallsLeft = role === "admin" ? -1 : 20;
+
             await this.db.updateApiCallsLeft(email, apiCallsLeft);
 
             res.json({ message: "User role and API call limit updated successfully" });
