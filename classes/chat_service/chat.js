@@ -13,6 +13,10 @@ class ChatService {
     getSession = (email) => {
         if (!this.#sessions.has(email)) {
             this.#sessions.set(email, new cb()); // set session with user email and chatbot instance
+
+            setTimeout(() => {
+                this.#sessions.delete(email);
+            }, 60 * 60 * 1000); // auto-delete after 1 hour
         }
         return this.#sessions.get(email); // gets session with user email
     }
