@@ -6,28 +6,6 @@ class DataController {
         this.db = database;
     }
 
-    getAllUserData = async (req, res, next) => {
-        try {
-            const users = await this.db.getAllUsers();
-
-            if (!users || users.length === 0) {
-                const err = new Error("No users found");
-                err.status = 404;
-                throw err;
-            }
-
-            res.json(users.map(user => ({
-                id: user.id,
-                user_name: user.user_name,
-                email: user.email,
-                role: user.role,
-                api_calls_left: user.api_calls_left,
-            })));
-        } catch (error) {
-            next(error);
-        }
-    }
-
     getMe = async (req, res, next) => {
         try {
             const userEmail = req.user.email;
@@ -45,6 +23,34 @@ class DataController {
                 role: user.role,
                 api_calls_left: user.api_calls_left
             });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    getAllUserData = async (req, res, next) => {
+        try {
+            if (req.user.role !== "admin") {
+                const err = new Error("Forbidden: Admins only");
+                err.status = 403;
+                throw err;
+            }
+
+            const users = await this.db.getAllUsers();
+
+            if (!users || users.length === 0) {
+                const err = new Error("No users found");
+                err.status = 404;
+                throw err;
+            }
+
+            res.json(users.map(user => ({
+                id: user.id,
+                user_name: user.user_name,
+                email: user.email,
+                role: user.role,
+                api_calls_left: user.api_calls_left,
+            })));
         } catch (error) {
             next(error);
         }
@@ -116,6 +122,12 @@ class DataController {
 
     getEndpointStats = async (req, res, next) => {
         try {
+            if (req.user.role !== "admin") {
+                const err = new Error("Forbidden: Admins only");
+                err.status = 403;
+                throw err;
+            }
+
             const stats = await this.db.getEndpointStats();
             res.json(stats);
         } catch (error) {
@@ -125,6 +137,12 @@ class DataController {
 
     getApiStats = async (req, res, next) => {
         try {
+            if (req.user.role !== "admin") {
+                const err = new Error("Forbidden: Admins only");
+                err.status = 403;
+                throw err;
+            }
+
             const stats = await this.db.getApiStats();
             res.json(stats);
         } catch (error) {
