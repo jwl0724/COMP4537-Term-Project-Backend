@@ -3,6 +3,7 @@
 const bcrypt = require("bcryptjs");
 const { generateToken, setTokenCookie } = require("../utils/token");
 
+// email format checker: user@domain.tld (no spaces, must contain @ and .)
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 class AuthService {
